@@ -13,7 +13,7 @@ import {
 
 import AdminService from '../services/AdminService';
 
-const RecoveryPassword = () => {
+function RecoveryPassword() {
   // Inputs
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -41,11 +41,11 @@ const RecoveryPassword = () => {
   const { Countdown } = Statistic;
   const { warning } = Modal;
 
-  const validatePassword = () => {
+  function validatePassword() {
     if (password.length <= 0 || passwordRepeat.length <= 0) return false;
     if (password.length < 8 || passwordRepeat.length < 8) return false;
     return password === passwordRepeat;
-  };
+  }
 
   async function validateStepZero() {
     const response = await AdminService.sendMailRecoveryPassword(email);
@@ -86,7 +86,7 @@ const RecoveryPassword = () => {
     }
   }
 
-  async function validateStepThree() {
+  function validateStepThree() {
     setRedirectToLogin(true);
   }
 
@@ -113,7 +113,7 @@ const RecoveryPassword = () => {
     setLoading(false);
   }
 
-  const finishedCountDown = () => {
+  function finishedCountDown() {
     setReturnButtonIsDisabled(false);
     setCountDownIsVisible(false);
     warning({
@@ -145,122 +145,132 @@ const RecoveryPassword = () => {
         </div>
       ),
     });
-  };
+  }
 
-  const returnToStepZero = () => {
+  function returnToStepZero() {
     message
       .info('Informe o mesmo e-mail que foi utilizado para se cadastrar e fazer login.', 10)
       .then();
     setStep(0);
-  };
+  }
 
-  const getSubmitButton = (disabled: boolean = false) => (
-    <Button type="primary" icon={<SendOutlined />} loading={loading} htmlType="submit" disabled={disabled}>
-      Avançar
-    </Button>
-  );
-
-  const getStepZero = () => (
-    <>
-      <Item label="E-mail" name="email" wrapperCol={{ md: 24 }}>
-        <Input
-          type="email"
-          size="large"
-          placeholder="Insira seu e-mail"
-          prefix={<MailOutlined />}
-          disabled={loading}
-          onChange={(event) => setEmail(event.target.value)}
-          required
-        />
-      </Item>
-      {getSubmitButton()}
-    </>
-  );
-
-  const getStepOne = () => (
-    <>
-      <Item label="Código" name="code" wrapperCol={{ md: 24 }}>
-        <Input
-          type="number"
-          size="large"
-          placeholder="Insira o código que você recebeu por e-mail"
-          prefix={<CodeOutlined />}
-          disabled={loading}
-          required
-        />
-      </Item>
-      {getSubmitButton()}
-      <Button
-        type="link"
-        onClick={() => returnToStepZero()}
-        htmlType="button"
-        disabled={returnButtonIsDisabled}
-      >
-        Ainda não recebi o código
+  function getSubmitButton(disabled: boolean = false) {
+    return (
+      <Button type="primary" icon={<SendOutlined />} loading={loading} htmlType="submit" disabled={disabled}>
+        Avançar
       </Button>
-      <Col className="mt-3">
-        {
-          countDownIsVisible
-          && <Countdown title="Tente novamente em" value={deadline} onFinish={finishedCountDown} format="mm:ss" />
-        }
-      </Col>
-    </>
-  );
+    );
+  }
 
-  const getStepTwo = () => (
-    <>
-      <Item
-        label="Nova senha"
-        name="password"
-        tooltip="A senha deve ter pelo menos 8 caracteres."
-        wrapperCol={{ md: 24 }}
-      >
-        <Input.Password
-          size="large"
-          placeholder="Digite sua nova senha"
-          prefix={<LockOutlined />}
-          iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-          onChange={(event) => setPassword(event.target.value)}
-          value={password}
-          disabled={loading}
-          required
-          minLength={8}
-        />
-      </Item>
-      <Item
-        label="Confirmar nova senha"
-        name="passwordRepeat"
-        tooltip="Repita a senha novamente, exatamente como no campo anterior."
-        wrapperCol={{ md: 24 }}
-      >
-        <Input.Password
-          size="large"
-          placeholder="Digite sua nova senha novamente"
-          prefix={<LockOutlined />}
-          iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-          onChange={(event) => setPasswordRepeat(event.target.value)}
-          value={passwordRepeat}
-          disabled={loading}
-          required
-          minLength={8}
-        />
-      </Item>
-      {getSubmitButton(!validatePassword())}
-    </>
-  );
+  function getStepZero() {
+    return (
+      <>
+        <Item label="E-mail" name="email" wrapperCol={{ md: 24 }}>
+          <Input
+            type="email"
+            size="large"
+            placeholder="Insira seu e-mail"
+            prefix={<MailOutlined />}
+            disabled={loading}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+          />
+        </Item>
+        {getSubmitButton()}
+      </>
+    );
+  }
 
-  const getStepThree = () => (
-    <Result
-      status="success"
-      title="Senha alterada com sucesso!"
-      subTitle="Agora você pode entrar no sistema novamente utilizando o mesmo e-mail e sua nova senha."
-      extra={[
-        <Button type="primary" key="login" htmlType="submit">
-          Entrar no sistema
-        </Button>,
-      ]}
-    />
-  );
+  function getStepOne() {
+    return (
+      <>
+        <Item label="Código" name="code" wrapperCol={{ md: 24 }}>
+          <Input
+            type="number"
+            size="large"
+            placeholder="Insira o código que você recebeu por e-mail"
+            prefix={<CodeOutlined />}
+            disabled={loading}
+            required
+          />
+        </Item>
+        {getSubmitButton()}
+        <Button
+          type="link"
+          onClick={() => returnToStepZero()}
+          htmlType="button"
+          disabled={returnButtonIsDisabled}
+        >
+          Ainda não recebi o código
+        </Button>
+        <Col className="mt-3">
+          {
+            countDownIsVisible
+            && <Countdown title="Tente novamente em" value={deadline} onFinish={finishedCountDown} format="mm:ss" />
+          }
+        </Col>
+      </>
+    );
+  }
+
+  function getStepTwo() {
+    return (
+      <>
+        <Item
+          label="Nova senha"
+          name="password"
+          tooltip="A senha deve ter pelo menos 8 caracteres."
+          wrapperCol={{ md: 24 }}
+        >
+          <Input.Password
+            size="large"
+            placeholder="Digite sua nova senha"
+            prefix={<LockOutlined />}
+            iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+            onChange={(event) => setPassword(event.target.value)}
+            value={password}
+            disabled={loading}
+            required
+            minLength={8}
+          />
+        </Item>
+        <Item
+          label="Confirmar nova senha"
+          name="passwordRepeat"
+          tooltip="Repita a senha novamente, exatamente como no campo anterior."
+          wrapperCol={{ md: 24 }}
+        >
+          <Input.Password
+            size="large"
+            placeholder="Digite sua nova senha novamente"
+            prefix={<LockOutlined />}
+            iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+            onChange={(event) => setPasswordRepeat(event.target.value)}
+            value={passwordRepeat}
+            disabled={loading}
+            required
+            minLength={8}
+          />
+        </Item>
+        {getSubmitButton(!validatePassword())}
+      </>
+    );
+  }
+
+  function getStepThree() {
+    return (
+      <Result
+        status="success"
+        title="Senha alterada com sucesso!"
+        subTitle="Agora você pode entrar no sistema novamente utilizando o mesmo e-mail e sua nova senha."
+        extra={[
+          <Button type="primary" key="login" htmlType="submit">
+            Entrar no sistema
+          </Button>,
+        ]}
+      />
+    );
+  }
 
   // Umount States
   useEffect(() => () => {}, []);
@@ -291,6 +301,6 @@ const RecoveryPassword = () => {
       </Content>
     </Layout>
   );
-};
+}
 
 export default RecoveryPassword;
