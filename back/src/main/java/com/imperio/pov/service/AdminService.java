@@ -1,5 +1,7 @@
 package com.imperio.pov.service;
 
+import com.imperio.pov.controller.dto.AdminDto;
+import com.imperio.pov.controller.exception.FieldDuplicateEntryException;
 import com.imperio.pov.controller.exception.ResourceNotFoundException;
 import com.imperio.pov.model.Admin;
 import com.imperio.pov.model.Token;
@@ -23,6 +25,30 @@ public class AdminService {
         Optional<Admin> admin = repository.findByEmail(email);
         if (admin.isEmpty()) throw new ResourceNotFoundException("Não existe nenhum administrador cadastrado com esse e-mail.");
         return admin.get();
+    }
+
+    public boolean fullNameIsExists(String fullName) {
+        Optional<Admin> adminOrNull = repository.findByFullName(fullName);
+        return adminOrNull.isPresent();
+    }
+
+    public boolean emailIsExists(String email) {
+        Optional<Admin> adminOrNull = repository.findByEmail(email);
+        return adminOrNull.isPresent();
+    }
+
+    public AdminDto register(Admin admin) {
+        admin.setId(null);
+
+        if (fullNameIsExists(admin.getFullName())) {
+            throw new FieldDuplicateEntryException("Já existe um operador registrado com esse nome.");
+        }
+
+        if (emailIsExists(admin.getEmail())) {
+            throw new FieldDuplicateEntryException("Já existe um operador registrado com esse e-mail.");
+        }
+
+        return repository.save(admin).mapperToDto();
     }
 
     public boolean updatePassword(String email, String newPassword) {

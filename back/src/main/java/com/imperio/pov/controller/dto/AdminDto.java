@@ -1,30 +1,38 @@
 package com.imperio.pov.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.imperio.pov.model.Admin;
 import com.imperio.pov.model.enums.LevelAdmin;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.ReadOnlyProperty;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
 public class AdminDto implements Serializable {
 
-    @NotBlank
+    @ReadOnlyProperty
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "O campo nome é obrigatório.")
     private String fullName;
 
-    @Email
+    @NotBlank(message = "O campo e-mail é obrigatório.")
+    @Email(message = "O e-mail informado é inválido.")
     private String email;
 
-    @Min(value = 8)
+    @JsonIgnore()
+    @Length(min = 8, message = "A senha deve ter mais de 8 caracteres.")
     private String password;
 
-    @NotBlank
+    @NotNull(message = "O campo level é obrigatório.")
+    @Enumerated(EnumType.STRING)
     private LevelAdmin level;
 
     public Admin mapperToModel() {
