@@ -59,7 +59,8 @@ public class AdminService {
     }
 
     public boolean sendMailRecoveryPassword(String email) {
-        String mail = find(email).getEmail();
+        if (!emailIsExists(email)) throw new ResourceNotFoundException("O e-mail informado não pertence a nenhum operador do sistema.");
+        // logica para enviar email
         System.out.println("E-mail enviado! --Implementar futuramente!");
         return true;
     }

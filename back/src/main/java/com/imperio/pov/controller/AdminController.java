@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 @RestController
 @RequestMapping(value = "/admin")
@@ -28,11 +29,17 @@ public class AdminController {
         return service.register(admin);
     }
 
+    @PutMapping(value = "/change-password")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Boolean> changePassword(@RequestBody Token token) {
+        boolean passwordIsValid = service.changePassword(token);
+        return ResponseEntity.ok(passwordIsValid);
+    }
+
     @GetMapping(value = "/send-mail-recovery-password/{email}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Boolean> sendMailRecoveryPassword(@Valid @PathVariable String email) {
-        boolean isSend = service.sendMailRecoveryPassword(email);
-        return ResponseEntity.ok(isSend);
+    public Boolean sendMailRecoveryPassword(@PathVariable String email) {
+        return service.sendMailRecoveryPassword(email);
     }
 
     @GetMapping(value = "/verify-token-recovery-password/{token}/{email}")
@@ -42,11 +49,6 @@ public class AdminController {
         return ResponseEntity.ok(tokenIsValid);
     }
 
-    @PutMapping(value = "/change-password")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Boolean> changePassword(@RequestBody Token token) {
-        boolean passwordIsValid = service.changePassword(token);
-        return ResponseEntity.ok(passwordIsValid);
-    }
+
 
 }
