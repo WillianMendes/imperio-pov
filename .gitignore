@@ -1,0 +1,40 @@
+### IntelliJ IDEA ###
+front/.idea
+back/.idea
+back/*.iws
+back/*.iml
+back/*.ipr
+
+### VS Code ###
+front/.vscode/
+back/.vscode/
+
+# dependencies front
+front/node_modules
+front/.pnp
+front.pnp.js
+
+# testing front
+front/coverage
+
+# back java
+back/HELP.md
+back/target/
+back/!.mvn/wrapper/maven-wrapper.jar
+back/!**/src/main/**/target/
+back/!**/src/test/**/target/
+
+# production
+back/build
+
+# misc
+front/.DS_Store
+front/.env.local
+front/.env.development.local
+front/.env.test.local
+front/.env.production.local
+
+front/npm-debug.log*
+front/yarn-debug.log*
+front/yarn-error.log*
+

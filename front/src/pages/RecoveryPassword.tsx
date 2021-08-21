@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react';
+import { Redirect } from 'react-router-dom';
 
 import {
-  Button, Col, Form, Input, Layout, message, Modal, Row, Statistic, Steps,
+  Button, Col, Form, Input, Layout, message, Modal, Result, Row, Statistic, Steps,
 } from 'antd';
+import { Content } from 'antd/lib/layout/layout';
+
 import {
-  CodeOutlined, ExclamationCircleOutlined, MailOutlined, SendOutlined,
+  CodeOutlined, ExclamationCircleOutlined, EyeInvisibleOutlined, EyeTwoTone, LockOutlined,
+  MailOutlined, SendOutlined,
 } from '@ant-design/icons';
 
-import { Content } from 'antd/lib/layout/layout';
 import AdminService from '../services/AdminService';
 
 const RecoveryPassword = () => {
   // Inputs
   const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [passwordRepeat, setPasswordRepeat] = useState<string>('');
 
   // Buttons
   const [returnButtonIsDisabled, setReturnButtonIsDisabled] = useState<boolean>(true);
@@ -20,6 +25,9 @@ const RecoveryPassword = () => {
   // Loadings
   const [loading, setLoading] = useState<boolean>(false);
   const [countDownIsVisible, setCountDownIsVisible] = useState<boolean>(true);
+
+  // Redirects
+  const [redirectToLogin, setRedirectToLogin] = useState<boolean>(false);
 
   // Others
   const [step, setStep] = useState<number>(0);
@@ -32,6 +40,12 @@ const RecoveryPassword = () => {
   const { Step } = Steps;
   const { Countdown } = Statistic;
   const { warning } = Modal;
+
+  const validatePassword = () => {
+    if (password.length <= 0 || passwordRepeat.length <= 0) return false;
+    if (password.length < 8 || passwordRepeat.length < 8) return false;
+    return password === passwordRepeat;
+  };
 
   async function validateStepZero() {
     const response = await AdminService.sendMailRecoveryPassword(email);
@@ -57,8 +71,26 @@ const RecoveryPassword = () => {
     } else if (!response) {
       message.error('Ops! O token informado já expirou, solicite outro novamente!');
     }
+  }
 
-    setCountDownIsVisible(true);
+  async function validateStepTwo(values: any) {
+    if (!validatePassword()) message.error('As senhas informadas são diferentes, digite a mesma senha nos dois campos');
+
+    const { code } = values;
+    const response = await AdminService.changePassword(code, email, password);
+
+    if (response !== false && response !== true) {
+      if (response === undefined) message.error('Ops! Houve um erro no servidor, tente novamente mais tarde!');
+      if ('message' in response) message.error(response.message);
+    } else if (response) {
+      setStep(3);
+    } else if (!response) {
+      message.error('Ops! O token informado já expirou, solicite outro novamente!');
+    }
+  }
+
+  async function validateStepThree() {
+    setRedirectToLogin(true);
   }
 
   async function onFinishSuccess(values: any) {
@@ -73,6 +105,10 @@ const RecoveryPassword = () => {
         await validateStepOne(values);
         break;
       case 2:
+        await validateStepTwo(values);
+        break;
+      case 3:
+        await validateStepThree();
         break;
       default:
         message.error('Ops! Aconteceu algum problema estranho!');
@@ -174,8 +210,65 @@ const RecoveryPassword = () => {
     </>
   );
 
+  const getStepTwo = () => (
+    <>
+      <Item
+        label="Nova senha"
+        name="password"
+        tooltip="A senha deve ter pelo menos 8 caracteres."
+        wrapperCol={{ md: 24 }}
+      >
+        <Input.Password
+          size="large"
+          placeholder="Digite sua nova senha"
+          prefix={<LockOutlined />}
+          iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+          onChange={(event) => setPassword(event.target.value)}
+          value={password}
+          disabled={loading}
+          required
+          minLength={8}
+        />
+      </Item>
+      <Item
+        label="Confirmar nova senha"
+        name="passwordRepeat"
+        tooltip="Repita a senha novamente, exatamente como no campo anterior."
+        wrapperCol={{ md: 24 }}
+      >
+        <Input.Password
+          size="large"
+          placeholder="Digite sua nova senha novamente"
+          prefix={<LockOutlined />}
+          iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+          onChange={(event) => setPasswordRepeat(event.target.value)}
+          value={passwordRepeat}
+          disabled={loading}
+          required
+          minLength={8}
+        />
+      </Item>
+      {getSubmitButton(!validatePassword())}
+    </>
+  );
+
+  const getStepThree = () => (
+    <Result
+      status="success"
+      title="Senha alterada com sucesso!"
+      subTitle="Agora você pode entrar no sistema novamente utilizando o mesmo e-mail e sua nova senha."
+      extra={[
+        <Button type="primary" key="login" htmlType="submit">
+          Entrar no sistema
+        </Button>,
+      ]}
+    />
+  );
+
   // Umount States
   useEffect(() => () => {}, []);
+
+  if (redirectToLogin) return <Redirect to="/login" />;
 
   return (
     <Layout>
@@ -186,12 +279,15 @@ const RecoveryPassword = () => {
               <Step title="E-mail" />
               <Step title="Autenticação" />
               <Step title="Nova senha" />
+              <Step title="Sucesso" />
             </Steps>
           </Col>
           <Col span="24" className="mt-4">
             <Form name={`formStep${step}`} layout="vertical" onFinish={onFinishSuccess}>
               {step === 0 && getStepZero()}
               {step === 1 && getStepOne()}
+              {step === 2 && getStepTwo()}
+              {step === 3 && getStepThree()}
             </Form>
           </Col>
         </Row>
