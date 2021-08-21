@@ -5,6 +5,7 @@ import com.imperio.pov.controller.exception.FieldDuplicateEntryException;
 import com.imperio.pov.controller.exception.ResourceNotFoundException;
 import com.imperio.pov.model.Admin;
 import com.imperio.pov.model.Token;
+import com.imperio.pov.model.enums.LevelAdmin;
 import com.imperio.pov.repository.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,7 @@ public class AdminService {
 
     public AdminDto register(Admin admin) {
         admin.setId(null);
+        admin.setLevel(LevelAdmin.Operador);
 
         if (fullNameIsExists(admin.getFullName())) {
             throw new FieldDuplicateEntryException("Já existe um operador registrado com esse nome.");
