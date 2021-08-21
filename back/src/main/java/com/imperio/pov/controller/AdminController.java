@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @RestController
@@ -36,10 +37,10 @@ public class AdminController {
         return ResponseEntity.ok(passwordIsValid);
     }
 
-    @GetMapping(value = "/send-mail-recovery-password/{email}")
+    @GetMapping(value = "/send-mail-recovery-password", params = "email")
     @ResponseStatus(HttpStatus.OK)
-    public Boolean sendMailRecoveryPassword(@PathVariable String email) {
-        return service.sendMailRecoveryPassword(email);
+    public void sendMailRecoveryPassword(@RequestParam String email) {
+        service.sendMailRecoveryPassword(email);
     }
 
     @GetMapping(value = "/verify-token-recovery-password/{token}/{email}")

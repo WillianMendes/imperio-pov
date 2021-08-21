@@ -8,6 +8,7 @@ import com.imperio.pov.model.Token;
 import com.imperio.pov.repository.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Validator;
 
 import java.util.Optional;
 
@@ -58,11 +59,10 @@ public class AdminService {
         return true;
     }
 
-    public boolean sendMailRecoveryPassword(String email) {
+    public void sendMailRecoveryPassword(String email) {
         if (!emailIsExists(email)) throw new ResourceNotFoundException("O e-mail informado não pertence a nenhum operador do sistema.");
         // logica para enviar email
         System.out.println("E-mail enviado! --Implementar futuramente!");
-        return true;
     }
 
     public boolean verifyTokenRecoveryPassword(String token, String email) {
