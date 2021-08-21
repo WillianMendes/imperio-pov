@@ -43,13 +43,10 @@ public class AdminController {
         service.sendMailRecoveryPassword(email);
     }
 
-    @GetMapping(value = "/verify-token-recovery-password/{token}/{email}")
+    @GetMapping(value = "/verify-token-recovery-password", params = {"token", "email"})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Boolean> verifyTokenRecoveryPassword(@Valid @PathVariable String token, @Valid @PathVariable String email) {
-        boolean tokenIsValid = service.verifyTokenRecoveryPassword(token, email);
-        return ResponseEntity.ok(tokenIsValid);
+    public boolean verifyTokenRecoveryPassword(@RequestParam String token, @RequestParam String email) {
+        return service.verifyTokenRecoveryPassword(token, email);
     }
-
-
 
 }

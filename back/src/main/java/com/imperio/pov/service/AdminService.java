@@ -68,9 +68,11 @@ public class AdminService {
     }
 
     public boolean verifyTokenRecoveryPassword(String token, String email) {
-        Optional<Admin> admin = repository.findByEmail(email);
+        if (!emailIsExists(email)) throw new ResourceNotFoundException("O e-mail informado não pertence a nenhum operador do sistema.");
+        // Verifica se o token existe e não expirou
+        // Verifica se o token pertence ao email informado
         System.out.println("Token verificado! --Implementar futuramente!");
-        return admin.isPresent();
+        return true;
     }
 
     public boolean changePassword(Token token) {
