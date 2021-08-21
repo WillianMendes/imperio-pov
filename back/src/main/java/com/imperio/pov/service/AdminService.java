@@ -3,13 +3,13 @@ package com.imperio.pov.service;
 import com.imperio.pov.controller.dto.AdminDto;
 import com.imperio.pov.controller.exception.FieldDuplicateEntryException;
 import com.imperio.pov.controller.exception.ResourceNotFoundException;
+import com.imperio.pov.controller.exception.TokenException;
 import com.imperio.pov.model.Admin;
 import com.imperio.pov.model.Token;
 import com.imperio.pov.model.enums.LevelAdmin;
 import com.imperio.pov.repository.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.Validator;
 
 import java.util.Optional;
 
@@ -54,11 +54,10 @@ public class AdminService {
         return repository.save(admin).mapperToDto();
     }
 
-    public boolean updatePassword(String email, String newPassword) {
+    public void updatePassword(String email, String newPassword) {
         Admin admin = find(email);
         admin.setPassword(newPassword);
         repository.save(admin);
-        return true;
     }
 
     public void sendMailRecoveryPassword(String email) {
@@ -68,19 +67,18 @@ public class AdminService {
     }
 
     public boolean verifyTokenRecoveryPassword(String token, String email) {
-        if (!emailIsExists(email)) throw new ResourceNotFoundException("O e-mail informado não pertence a nenhum operador do sistema.");
-        // Verifica se o token existe e não expirou
-        // Verifica se o token pertence ao email informado
+        if (!emailIsExists(email)) return false;
+        // Verifica se o token pertence ao email informado e não expirou (return false)
         System.out.println("Token verificado! --Implementar futuramente!");
         return true;
     }
 
-    public boolean changePassword(Token token) {
+    public void changePassword(Token token) {
         boolean tokenIsValid = verifyTokenRecoveryPassword(token.getToken(), token.getEmail());
 
-        if (!tokenIsValid) return false;
+        if (!tokenIsValid) throw new TokenException("Token inválido");
 
-        return updatePassword(token.getEmail(), token.getPassword());
+        updatePassword(token.getEmail(), token.getPassword());
     }
 
 }

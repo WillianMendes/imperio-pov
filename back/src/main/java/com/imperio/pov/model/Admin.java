@@ -38,7 +38,7 @@ public class Admin {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
+    @Column
     private LevelAdmin level;
 
     public AdminDto mapperToDto() {

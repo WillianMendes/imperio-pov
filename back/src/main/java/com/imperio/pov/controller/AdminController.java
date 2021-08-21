@@ -6,12 +6,9 @@ import com.imperio.pov.model.Token;
 import com.imperio.pov.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 
 @RestController
 @RequestMapping(value = "/admin")
@@ -32,9 +29,8 @@ public class AdminController {
 
     @PutMapping(value = "/change-password")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Boolean> changePassword(@RequestBody Token token) {
-        boolean passwordIsValid = service.changePassword(token);
-        return ResponseEntity.ok(passwordIsValid);
+    public void changePassword(@RequestBody Token token) {
+        service.changePassword(token);
     }
 
     @GetMapping(value = "/send-mail-recovery-password", params = "email")
