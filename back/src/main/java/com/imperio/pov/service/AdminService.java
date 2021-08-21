@@ -9,6 +9,7 @@ import com.imperio.pov.model.Token;
 import com.imperio.pov.model.enums.LevelAdmin;
 import com.imperio.pov.repository.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,16 +18,26 @@ import java.util.Optional;
 public class AdminService {
 
     private final AdminRepository repository;
+    private final PasswordEncoder encoder;
 
     @Autowired
-    public AdminService(AdminRepository repository) {
+    public AdminService(AdminRepository repository, PasswordEncoder encoder) {
         this.repository = repository;
+        this.encoder = encoder;
     }
 
     public Admin find(String email) {
         Optional<Admin> admin = repository.findByEmail(email);
         if (admin.isEmpty()) throw new ResourceNotFoundException("Não existe nenhum administrador cadastrado com esse e-mail.");
         return admin.get();
+    }
+
+    public void authentication(String email, String password) {
+        Optional<Admin> adminOrEmpty = repository.findByEmail(email);
+        if (adminOrEmpty.isEmpty()) throw new ResourceNotFoundException("Não existe nenhum administrador cadastrado com esse e-mail.");
+
+        Admin admin = adminOrEmpty.get();
+        encoder.matches(password, admin.getPassword());
     }
 
     public boolean fullNameIsExists(String fullName) {
@@ -51,12 +62,13 @@ public class AdminService {
             throw new FieldDuplicateEntryException("Já existe um operador registrado com esse e-mail.");
         }
 
+        admin.setPassword(encoder.encode(admin.getPassword()));
         return repository.save(admin).mapperToDto();
     }
 
     public void updatePassword(String email, String newPassword) {
         Admin admin = find(email);
-        admin.setPassword(newPassword);
+        admin.setPassword(encoder.encode(newPassword));
         repository.save(admin);
     }
 
@@ -67,7 +79,7 @@ public class AdminService {
     }
 
     public boolean verifyTokenRecoveryPassword(String token, String email) {
-        if (!emailIsExists(email)) return false;
+        if (!emailIsExists(email)) throw new ResourceNotFoundException("Não existe nenhum administrador cadastrado com esse e-mail.");
         // Verifica se o token pertence ao email informado e não expirou (return false)
         System.out.println("Token verificado! --Implementar futuramente!");
         return true;
