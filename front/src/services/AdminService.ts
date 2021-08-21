@@ -1,9 +1,9 @@
 import ErrorApi from '../types/ErrorApi';
 
 import {
+  API_URL_ADMIN_CHANGE_PASSWORD_RECOVERY_PASSWORD as ADMIN_CHANGE_PASSWORD,
   API_URL_ADMIN_SEND_MAIL_RECOVERY_PASSWORD as ADMIN_SEND_MAIL,
   API_URL_ADMIN_VERIFY_TOKEN_RECOVERY_PASSWORD as ADMIN_VERIFY_TOKEN,
-  API_URL_ADMIN_CHANGE_PASSWORD_RECOVERY_PASSWORD as ADMIN_CHANGE_PASSWORD,
 } from '../const/API_POS';
 import Token from '../types/Token';
 
@@ -14,8 +14,9 @@ class AdminService {
 
   static async sendMailRecoveryPassword(email: string): Promise<Boolean | ErrorApi> {
     try {
-      const response = await fetch(`${ADMIN_SEND_MAIL}/${email}`);
-      return response.json();
+      const response = await fetch(`${ADMIN_SEND_MAIL}?email=${email}`);
+      if (response.status === 200) return true;
+      return await response.json();
     } catch (error) {
       this.errorApi.error = error;
       return this.errorApi;
@@ -25,8 +26,9 @@ class AdminService {
   static async verifyTokenRecoveryPassword(token: string,
     email: string): Promise<Boolean | ErrorApi> {
     try {
-      const response = await fetch(`${ADMIN_VERIFY_TOKEN}/${token}/${email}`);
-      return response.json();
+      const response = await fetch(`${ADMIN_VERIFY_TOKEN}?token=${token}&email=${email}`);
+      if (response.status === 200) return true;
+      return await response.json();
     } catch (error) {
       this.errorApi.error = error;
       return this.errorApi;
@@ -34,7 +36,7 @@ class AdminService {
   }
 
   static async changePassword(code: string, email: string,
-    password: string): Promise<Boolean | ErrorApi> {
+    password: string): Promise<Response | ErrorApi> {
     const token: Token = {
       token: code,
       email,
@@ -45,8 +47,7 @@ class AdminService {
     header.set('Content-Type', 'application/json');
 
     try {
-      const response = await fetch(ADMIN_CHANGE_PASSWORD, { method: 'PUT', body: JSON.stringify(token), headers: header });
-      return response.json();
+      return await fetch(ADMIN_CHANGE_PASSWORD, { method: 'PUT', body: JSON.stringify(token), headers: header });
     } catch (error) {
       this.errorApi.error = error;
       return this.errorApi;

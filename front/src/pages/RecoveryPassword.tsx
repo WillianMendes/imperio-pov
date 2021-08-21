@@ -51,11 +51,9 @@ const RecoveryPassword = () => {
     const response = await AdminService.sendMailRecoveryPassword(email);
 
     if (response !== false && response !== true) {
-      if (response === undefined) message.error('Ops! Houve um erro no servidor, tente novamente mais tarde!');
       if ('message' in response) message.error(response.message);
-    } else if (response) {
-      setStep(1);
-    }
+      else message.error('Ops! Ocorreu algum problema desconhecido, tente enviar o e-mail novamente.');
+    } else if (response) setStep(1);
   }
 
   async function validateStepOne(values: any) {
@@ -79,13 +77,12 @@ const RecoveryPassword = () => {
     const { code } = values;
     const response = await AdminService.changePassword(code, email, password);
 
-    if (response !== false && response !== true) {
-      if (response === undefined) message.error('Ops! Houve um erro no servidor, tente novamente mais tarde!');
-      if ('message' in response) message.error(response.message);
-    } else if (response) {
+    if (response.status === 200) {
       setStep(3);
-    } else if (!response) {
-      message.error('Ops! O token informado já expirou, solicite outro novamente!');
+    } else if ('message' in response) {
+      message.error(response.message);
+    } else {
+      message.error('Ops! Ocorreu um erro desconhecido, solicite outro token e tente novamente!');
     }
   }
 
