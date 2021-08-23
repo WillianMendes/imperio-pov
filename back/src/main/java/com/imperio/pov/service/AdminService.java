@@ -1,6 +1,7 @@
 package com.imperio.pov.service;
 
 import com.imperio.pov.controller.dto.AdminDto;
+import com.imperio.pov.controller.exception.AuthenticationException;
 import com.imperio.pov.controller.exception.FieldDuplicateEntryException;
 import com.imperio.pov.controller.exception.ResourceNotFoundException;
 import com.imperio.pov.controller.exception.TokenException;
@@ -32,12 +33,16 @@ public class AdminService {
         return admin.get();
     }
 
-    public void authentication(String email, String password) {
+    public AdminDto authentication(String email, String password) {
         Optional<Admin> adminOrEmpty = repository.findByEmail(email);
         if (adminOrEmpty.isEmpty()) throw new ResourceNotFoundException("Não existe nenhum administrador cadastrado com esse e-mail.");
 
         Admin admin = adminOrEmpty.get();
-        encoder.matches(password, admin.getPassword());
+        boolean isAuthenticated = encoder.matches(password, admin.getPassword());
+
+        if (!isAuthenticated) throw new AuthenticationException("Senha incorreta!");
+
+        return admin.mapperToDto();
     }
 
     public boolean fullNameIsExists(String fullName) {

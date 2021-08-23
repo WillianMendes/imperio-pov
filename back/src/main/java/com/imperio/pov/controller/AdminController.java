@@ -24,8 +24,8 @@ public class AdminController {
 
     @PostMapping(value = "/authentication")
     @ResponseStatus(HttpStatus.OK)
-    public void login(@RequestBody Login login) {
-        service.authentication(login.getEmail(), login.getPassword());
+    public AdminDto login(@RequestBody Login login) {
+        return service.authentication(login.getEmail(), login.getPassword());
     }
 
     @PostMapping("/save")
