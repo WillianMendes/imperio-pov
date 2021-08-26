@@ -22,17 +22,20 @@ public class ProductController {
     }
 
     @GetMapping(params = {"page", "size"})
+    @ResponseStatus(HttpStatus.OK)
     public Page<ProductDto> findAll(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
                                     @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         return service.findAll(page, size);
     }
 
     @GetMapping(value = "/search", params = "code")
+    @ResponseStatus(HttpStatus.OK)
     public ProductDto find(@RequestParam Long code) {
         return service.find(code);
     }
 
     @GetMapping(value = "/search", params = "term")
+    @ResponseStatus(HttpStatus.OK)
     public Page<ProductDto> findAllByName(@RequestParam String term,
                                           @RequestParam(value = "page", required = false, defaultValue = "0") int page,
                                           @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
