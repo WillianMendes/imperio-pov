@@ -1,12 +1,8 @@
 package com.imperio.pov.model;
 
-import com.imperio.pov.controller.dto.AdminDto;
 import com.imperio.pov.controller.dto.ProductDto;
 import com.imperio.pov.model.enums.Measurement;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -18,7 +14,8 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class Product implements Serializable {
 
     @Id

@@ -55,4 +55,10 @@ public class ProductController {
         return service.update(product, code);
     }
 
+    @DeleteMapping(value = "/delete", params = "code")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@RequestParam Long code) {
+        service.delete(code);
+    }
+
 }

@@ -60,4 +60,9 @@ public class ProductService {
 
         return repository.save(product).mapperToDto();
     }
+
+    public void delete(Long code) {
+        Product product = find(code).mapperToModel();
+        repository.delete(product);
+    }
 }
