@@ -28,6 +28,11 @@ public class ProductService {
         return repository.findAll(pageRequest).map(Product::mapperToDto);
     }
 
+    public Page<ProductDto> findAllByName(String term, Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, "name");
+        return repository.findAllByNameContaining(term, pageRequest).map(Product::mapperToDto);
+    }
+
     public ProductDto find(Long code) {
         Optional<Product> productOrNull = repository.findByCode(code);
         if (productOrNull.isEmpty()) throw new ResourceNotFoundException("Produto não encontrado.");
@@ -45,5 +50,4 @@ public class ProductService {
 
         return repository.save(product).mapperToDto();
     }
-
 }

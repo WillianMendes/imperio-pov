@@ -32,6 +32,13 @@ public class ProductController {
         return service.find(code);
     }
 
+    @GetMapping(value = "/search", params = "term")
+    public Page<ProductDto> findAllByName(@RequestParam String term,
+                                          @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+                                          @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
+        return service.findAllByName(term, page, size);
+    }
+
     @PostMapping(value = "/save")
     @ResponseStatus(HttpStatus.CREATED)
     public ProductDto register(@Valid @RequestBody Product product) {
