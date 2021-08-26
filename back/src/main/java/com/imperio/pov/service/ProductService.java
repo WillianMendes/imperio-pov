@@ -2,10 +2,13 @@ package com.imperio.pov.service;
 
 import com.imperio.pov.controller.dto.ProductDto;
 import com.imperio.pov.controller.exception.FieldDuplicateEntryException;
+import com.imperio.pov.controller.exception.ResourceNotFoundException;
 import com.imperio.pov.model.Product;
 import com.imperio.pov.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -15,6 +18,12 @@ public class ProductService {
     @Autowired
     public ProductService(ProductRepository repository) {
         this.repository = repository;
+    }
+
+    public ProductDto find(Long code) {
+        Optional<Product> productOrNull = repository.findByCode(code);
+        if (productOrNull.isEmpty()) throw new ResourceNotFoundException("Produto não encontrado.");
+        return productOrNull.get().mapperToDto();
     }
 
     public boolean nameIsExists(String name) {

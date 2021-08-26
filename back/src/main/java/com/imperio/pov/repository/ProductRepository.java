@@ -9,6 +9,7 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends CrudRepository<Product, Long> {
 
+    Optional<Product> findByCode(Long code);
     Optional<Product> findByName(String name);
 
 }

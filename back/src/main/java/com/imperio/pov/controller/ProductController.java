@@ -20,6 +20,11 @@ public class ProductController {
         this.service = service;
     }
 
+    @GetMapping(value = "/search", params = "code")
+    public ProductDto find(@RequestParam Long code) {
+        return service.find(code);
+    }
+
     @PostMapping(value = "/save")
     @ResponseStatus(HttpStatus.CREATED)
     public ProductDto register(@Valid @RequestBody Product product) {
