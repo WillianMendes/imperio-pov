@@ -1,3 +1,7 @@
+html {
+    overflow: hidden;
+}
+
 .w-100vw {
     width: 100vw;
 }
@@ -155,4 +159,49 @@
     background-color: aliceblue;
     padding: 64px;
     border-radius: 8px;
+}
+
+.success {
+    background-color: green;
+}
+
+.success h1 {
+    color: white;
+}
+
+.danger {
+    background-color: red;
+}
+
+.danger h1 {
+    color: white;
+}
+
+.ant-card-body {
+    padding: 0;
+    min-height: 100vh;
+}
+
+.ant-page-header {
+    padding: 0;
+}
+
+.card-button-base {
+    width: 25%;
+    height: 25vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+}
+
+.card-button span {
+    margin-bottom: 4px;
+}
+
+.card-stats h3 {
+    color: #0088cc;
+    font-weight: 700;
 }
