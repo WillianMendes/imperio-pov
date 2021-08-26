@@ -6,6 +6,9 @@ import com.imperio.pov.controller.exception.ResourceNotFoundException;
 import com.imperio.pov.model.Product;
 import com.imperio.pov.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,6 +21,11 @@ public class ProductService {
     @Autowired
     public ProductService(ProductRepository repository) {
         this.repository = repository;
+    }
+
+    public Page<ProductDto> findAll(Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, "name");
+        return repository.findAll(pageRequest).map(Product::mapperToDto);
     }
 
     public ProductDto find(Long code) {

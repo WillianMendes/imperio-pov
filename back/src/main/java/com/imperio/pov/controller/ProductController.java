@@ -4,6 +4,7 @@ import com.imperio.pov.controller.dto.ProductDto;
 import com.imperio.pov.model.Product;
 import com.imperio.pov.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,12 @@ public class ProductController {
     @Autowired
     public ProductController(ProductService service) {
         this.service = service;
+    }
+
+    @GetMapping(params = {"page", "size"})
+    public Page<ProductDto> findAll(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+                                    @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
+        return service.findAll(page, size);
     }
 
     @GetMapping(value = "/search", params = "code")
