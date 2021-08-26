@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import {
-  Button, message, PageHeader, Space, Table,
+  Button, Input, message, PageHeader, Space, Table,
 } from 'antd';
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
@@ -24,6 +24,13 @@ function Products() {
   async function getProducts(page: number = 0) {
     setLoading(true);
     const result = await ProductService.listAll(page);
+    if ('content' in result) setProducts(result);
+    setLoading(false);
+  }
+
+  async function findProducts(name: string, page: number = 0) {
+    setLoading(true);
+    const result = await ProductService.listByName(name, page);
     if ('content' in result) setProducts(result);
     setLoading(false);
   }
@@ -56,6 +63,24 @@ function Products() {
           Novo Produto
         </Button>
       </Link>
+    );
+  }
+
+  function getInputSearch() {
+    return (
+      <Input.Search
+        onSearch={(value) => findProducts(value)}
+        required
+      />
+    );
+  }
+
+  function pageHeaderExtra() {
+    return (
+      <Space>
+        { getInputSearch() }
+        { getButtonNewProduct() }
+      </Space>
     );
   }
 
@@ -99,7 +124,10 @@ function Products() {
 
   return (
     <div style={{ padding: 32 }}>
-      <PageHeader title="Produtos" extra={getButtonNewProduct()} />
+      <PageHeader
+        title="Produtos"
+        extra={pageHeaderExtra()}
+      />
       { products && renderTable() }
     </div>
   );

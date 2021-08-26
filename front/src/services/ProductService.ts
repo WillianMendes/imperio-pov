@@ -2,7 +2,7 @@ import ErrorApi from '../types/ErrorApi';
 import Product from '../types/Product';
 import Pageable from '../types/Pageable';
 import {
-  API_URL_PRODUCT_DELETE,
+  API_URL_PRODUCT_DELETE, API_URL_PRODUCT_FIND_BY_NAME,
   API_URL_PRODUCT_GET_BY_CODE,
   API_URL_PRODUCT_REGISTER,
   API_URL_PRODUCT_UPDATE,
@@ -17,6 +17,18 @@ class ProductService {
   static async listAll(page = 0, size = 10) : Promise<Pageable<Product> | ErrorApi> {
     try {
       const response = await fetch(`${API_URL_PRODUCTS_LIST}?page=${page}&size=${size}`);
+      return response.json();
+    } catch (error) {
+      this.errorApi.error = error;
+      return this.errorApi;
+    }
+  }
+
+  static async listByName(
+    name: string, page: number = 0, size: number = 10,
+  ): Promise<Product | ErrorApi> {
+    try {
+      const response = await fetch(`${API_URL_PRODUCT_FIND_BY_NAME}?term=${name}&page=${page}&size=${size}`);
       return response.json();
     } catch (error) {
       this.errorApi.error = error;
