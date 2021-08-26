@@ -7,6 +7,7 @@ import {
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
+import Pageable from '../types/Pageable';
 import Product from '../types/Product';
 import ProductService from '../services/ProductService';
 import { formatterNumber } from '../utils/MaskCurrency';
@@ -15,15 +16,15 @@ function Products() {
   const { Column } = Table;
 
   // Data
-  const [products, setProducts] = useState<Product[]>();
+  const [products, setProducts] = useState<Pageable<Product>>();
 
   // Loading
   const [loading, setLoading] = useState<boolean>(false);
 
-  async function getProducts() {
+  async function getProducts(page: number = 0) {
     setLoading(true);
-    const result = await ProductService.listAll();
-    if ('content' in result) setProducts(result.content);
+    const result = await ProductService.listAll(page);
+    if ('content' in result) setProducts(result);
     setLoading(false);
   }
 
@@ -34,6 +35,10 @@ function Products() {
       message.success('O produto foi apagado.');
       getProducts().then();
     } else if ('message' in result) message.error(result.message);
+  }
+
+  function pagination(current: number) {
+    getProducts(current - 1).then();
   }
 
   useEffect(() => {
@@ -56,7 +61,17 @@ function Products() {
 
   function renderTable() {
     return (
-      <Table dataSource={products} loading={loading} style={{ marginTop: 32 }}>
+      <Table
+        dataSource={products?.content}
+        loading={loading}
+        pagination={{
+          total: products && products.totalElements,
+          current: products && products.number + 1,
+          pageSize: products && products.size,
+          onChange: (current) => pagination(current),
+        }}
+        style={{ marginTop: 32 }}
+      >
         <Column title="Nome" dataIndex="name" key="firstName" />
         <Column title="Preço de Custo" dataIndex="priceCost" key="priceCost" render={(value) => formatterNumber(value)} />
         <Column title="Preço de Venda" dataIndex="priceSell" key="priceSell" render={(value) => formatterNumber(value)} />
