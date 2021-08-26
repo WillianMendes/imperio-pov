@@ -16,3 +16,4 @@ export const API_URL_PRODUCT_GET_BY_CODE = `${API_URL_PRODUCT_BASE}/search`; // 
 export const API_URL_PRODUCT_FIND_BY_NAME = `${API_URL_PRODUCT_BASE}/search`; // term
 export const API_URL_PRODUCT_REGISTER = `${API_URL_PRODUCT_BASE}/save`; // METHOD POST
 export const API_URL_PRODUCT_UPDATE = `${API_URL_PRODUCT_BASE}/update`; // METHOD PUT
+export const API_URL_PRODUCT_DELETE = `${API_URL_PRODUCT_BASE}/delete`; // METHOD DELETE + code

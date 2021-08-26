@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import {
-  Button, PageHeader, Space, Table,
+  Button, message, PageHeader, Space, Table,
 } from 'antd';
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
@@ -25,6 +25,15 @@ function Products() {
     const result = await ProductService.listAll();
     if ('content' in result) setProducts(result.content);
     setLoading(false);
+  }
+
+  async function deleteProduct(code: number) {
+    const result = await ProductService.delete(code);
+
+    if (result.status === 204) {
+      message.success('O produto foi apagado.');
+      getProducts().then();
+    } else if ('message' in result) message.error(result.message);
   }
 
   useEffect(() => {
@@ -65,7 +74,7 @@ function Products() {
           render={(value) => (
             <Space size="middle">
               <Link to={`/product/update/${value.code}`}>Alterar</Link>
-              <Link to={`/product/delete/${value.code}`}>Excluir</Link>
+              <Link to="/product" onClick={() => deleteProduct(value.code)}>Excluir</Link>
             </Space>
           )}
         />

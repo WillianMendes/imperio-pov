@@ -2,6 +2,7 @@ import ErrorApi from '../types/ErrorApi';
 import Product from '../types/Product';
 import Pageable from '../types/Pageable';
 import {
+  API_URL_PRODUCT_DELETE,
   API_URL_PRODUCT_GET_BY_CODE,
   API_URL_PRODUCT_REGISTER,
   API_URL_PRODUCT_UPDATE,
@@ -52,9 +53,22 @@ class ProductService {
     header.set('Content-Type', 'application/json');
 
     try {
-      console.log(product);
       const response = await fetch(`${API_URL_PRODUCT_UPDATE}?code=${code}`,
         { method: 'PUT', body: JSON.stringify(product), headers: header });
+      return response.json();
+    } catch (error) {
+      this.errorApi.error = error;
+      return this.errorApi;
+    }
+  }
+
+  static async delete(code: number): Promise<ErrorApi | Response> {
+    const header = new Headers();
+    header.set('Content-Type', 'application/json');
+
+    try {
+      const response = await fetch(`${API_URL_PRODUCT_DELETE}?code=${code}`, { method: 'DELETE', headers: header });
+      if (response.status === 204) return response;
       return response.json();
     } catch (error) {
       this.errorApi.error = error;
