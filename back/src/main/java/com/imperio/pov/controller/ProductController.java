@@ -48,4 +48,11 @@ public class ProductController {
         return service.register(product);
     }
 
+    @PutMapping(value = "/update", params = "code")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProductDto update(@Valid @RequestBody Product product, @RequestParam Long code) {
+        product.setCode(code);
+        return service.update(product, code);
+    }
+
 }

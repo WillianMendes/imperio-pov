@@ -39,6 +39,10 @@ public class ProductService {
         return productOrNull.get().mapperToDto();
     }
 
+    public boolean codeIsExists(Long code) {
+        return repository.findByCode(code).isPresent();
+    }
+
     public boolean nameIsExists(String name) {
         return repository.findByName(name).isPresent();
     }
@@ -47,6 +51,12 @@ public class ProductService {
         product.setCode(null);
 
         if (nameIsExists(product.getName())) throw new FieldDuplicateEntryException("Já existe um produto registrado com esse nome.");
+
+        return repository.save(product).mapperToDto();
+    }
+
+    public ProductDto update(Product product, Long code) {
+        if (!codeIsExists(code)) throw new ResourceNotFoundException("Esse produto não existe, tente registrar um novo produto.");
 
         return repository.save(product).mapperToDto();
     }
