@@ -15,14 +15,21 @@ import { formatterNumber } from '../utils/MaskCurrency';
 function Products() {
   const { Column } = Table;
 
+  // Input
+  const [term, setTerm] = useState<string>('');
+
   // Data
   const [products, setProducts] = useState<Pageable<Product>>();
+
+  // Mode Table
+  const [searchMode, setSearchMode] = useState<boolean>();
 
   // Loading
   const [loading, setLoading] = useState<boolean>(false);
 
   async function getProducts(page: number = 0) {
     setLoading(true);
+    setSearchMode(false);
     const result = await ProductService.listAll(page);
     if ('content' in result) setProducts(result);
     setLoading(false);
@@ -30,6 +37,7 @@ function Products() {
 
   async function findProducts(name: string, page: number = 0) {
     setLoading(true);
+    setSearchMode(true);
     const result = await ProductService.listByName(name, page);
     if ('content' in result) setProducts(result);
     setLoading(false);
@@ -45,7 +53,8 @@ function Products() {
   }
 
   function pagination(current: number) {
-    getProducts(current - 1).then();
+    if (searchMode === false) getProducts(current - 1).then();
+    if (searchMode === true) findProducts(term, current - 1).then();
   }
 
   useEffect(() => {
@@ -69,6 +78,8 @@ function Products() {
   function getInputSearch() {
     return (
       <Input.Search
+        value={term}
+        onChange={(e) => setTerm(e.target.value)}
         onSearch={(value) => findProducts(value)}
         required
       />
