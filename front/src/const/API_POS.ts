@@ -11,4 +11,8 @@ export const API_URL_ADMIN_LOGIN = `${API_URL_ADMIN_BASE}/authentication`; // em
 
 // PRODUCT
 export const API_URL_PRODUCT_BASE = `${API_URL_BASE_DEV}/product`;
-export const API_URL_PRODUCT_REGISTER = `${API_URL_PRODUCT_BASE}/save`;
+export const API_URL_PRODUCTS_LIST = `${API_URL_PRODUCT_BASE}`; // page + size
+export const API_URL_PRODUCT_GET_BY_CODE = `${API_URL_PRODUCT_BASE}/search`; // code
+export const API_URL_PRODUCT_FIND_BY_NAME = `${API_URL_PRODUCT_BASE}/search`; // term
+export const API_URL_PRODUCT_REGISTER = `${API_URL_PRODUCT_BASE}/save`; // METHOD POST
+export const API_URL_PRODUCT_UPDATE = `${API_URL_PRODUCT_BASE}/update`; // METHOD PUT

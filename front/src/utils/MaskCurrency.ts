@@ -1,15 +1,22 @@
 function parserNumber(value: string | undefined): number {
   if (!value) return 0;
-  return Number(value.replace('R$', '').replace(',', '.'));
+  return Number(value.toString().replace('R$', '').replace(',', '.'));
 }
 
-function formatterNumber(value: string | undefined): string {
+function formatterNumber(value: string | undefined | number): string {
   if (!value) return '0';
   if (Number.isNaN(value)) return 'Valor Inválido.';
-  return Number(value.replace(',', '.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
+  return Number(value.toString().replace(',', '.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
+}
+
+function formatterNumberWithoutPrefix(value: string | number | undefined): string {
+  if (!value) return '0';
+  if (Number.isNaN(value)) return 'Valor Inválido.';
+  return value.toString().replace('.', ',');
 }
 
 export {
   formatterNumber,
   parserNumber,
+  formatterNumberWithoutPrefix,
 };

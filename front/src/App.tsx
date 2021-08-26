@@ -33,6 +33,9 @@ function App() {
               <ProtectedRoute path="/product" exact>
                 <Products />
               </ProtectedRoute>
+              <ProtectedRoute path="/product/update/:code">
+                <ProductRegister />
+              </ProtectedRoute>
               <ProtectedRoute path="/product/register">
                 <ProductRegister />
               </ProtectedRoute>
