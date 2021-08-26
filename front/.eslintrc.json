@@ -34,7 +34,9 @@
                 "ts": "never",
                 "tsx": "never"
             }
-        ]
+        ],
+        "react/prop-types": "off",
+        "react/require-default-props": 0
     },
     "settings": {
         "import/resolver": {
