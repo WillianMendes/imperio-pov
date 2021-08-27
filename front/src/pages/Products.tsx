@@ -1,46 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, FC } from 'react';
 import { Link } from 'react-router-dom';
 
 import {
-  Button, Input, message, PageHeader, Space, Table,
+  Button, Input, message, PageHeader, Space, Table, Tag,
 } from 'antd';
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
 import Pageable from '../types/Pageable';
 import Product from '../types/Product';
+
 import ProductService from '../services/ProductService';
+
 import { formatterNumber } from '../utils/MaskCurrency';
 import UserSessionStorage from '../utils/UserSessionStorage';
 
-function Products() {
-  const { Column } = Table;
+const { Column } = Table;
 
+const Products: FC = () => {
   // Input
   const [term, setTerm] = useState<string>('');
 
   // Data
   const [products, setProducts] = useState<Pageable<Product>>();
 
-  // Mode Table
-  const [searchMode, setSearchMode] = useState<boolean>();
-
   // Loading
   const [loading, setLoading] = useState<boolean>(false);
 
-  async function getProducts(page: number = 0) {
+  async function loadProducts(page: number = 0, name: string | undefined = '') {
     setLoading(true);
-    setSearchMode(false);
-    const result = await ProductService.listAll(page);
-    if ('content' in result) setProducts(result);
-    setLoading(false);
-  }
 
-  async function findProducts(name: string, page: number = 0) {
-    setLoading(true);
-    setSearchMode(true);
-    const result = await ProductService.listByName(name, page);
+    let result;
+    if (name && name !== '') result = await ProductService.listByName(name, page);
+    else result = await ProductService.listAll(page);
+
     if ('content' in result) setProducts(result);
+    else if ('message' in result) message.error(result.message);
+    else message.error('Não foi possível carregar os produtos.');
+
     setLoading(false);
   }
 
@@ -49,17 +46,17 @@ function Products() {
 
     if (result.status === 204) {
       message.success('O produto foi apagado.');
-      getProducts().then();
+      loadProducts().then();
     } else if ('message' in result) message.error(result.message);
   }
 
   function pagination(current: number) {
-    if (searchMode === false) getProducts(current - 1).then();
-    if (searchMode === true) findProducts(term, current - 1).then();
+    if (term && term !== '') loadProducts(current - 1, term).then();
+    else loadProducts(current - 1).then();
   }
 
   useEffect(() => {
-    getProducts().then();
+    loadProducts().then();
   }, []);
 
   function getButtonNewProduct() {
@@ -81,16 +78,31 @@ function Products() {
       <Input.Search
         value={term}
         onChange={(e) => setTerm(e.target.value)}
-        onSearch={(value) => findProducts(value)}
+        onSearch={(value) => loadProducts(0, value)}
         placeholder="Nome do produto..."
         required
+        loading={loading}
       />
+    );
+  }
+
+  function getTagTotalProducts() {
+    let phrase;
+
+    if (products && products.totalElements <= 0) phrase = 'Nenhum produto encontrado';
+    else if (products) phrase = `${products.totalElements} produtos encontrados.`;
+
+    return (
+      <Tag color={products && products?.totalElements > 0 ? 'green' : 'red'}>
+        { phrase }
+      </Tag>
     );
   }
 
   function pageHeaderExtra() {
     return (
       <Space>
+        { getTagTotalProducts() }
         { getInputSearch() }
         { getButtonNewProduct() }
       </Space>
@@ -147,6 +159,6 @@ function Products() {
       { products && renderTable() }
     </div>
   );
-}
+};
 
 export default Products;
