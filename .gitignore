@@ -26,6 +26,7 @@ back/!**/src/test/**/target/
 
 # production
 back/build
+front/build
 
 # misc
 front/.DS_Store
