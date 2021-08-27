@@ -3,6 +3,7 @@ import { Link, Redirect, useParams } from 'react-router-dom';
 
 import {
   Breadcrumb, Button, Col, Form, Input, InputNumber, message, PageHeader, Row, Select, Space,
+  Spin,
   Switch,
 } from 'antd';
 
@@ -71,6 +72,19 @@ function ProductRegister() {
   useEffect(() => {
     if (code) getProduct().then();
   }, []);
+
+  function renderSpin() {
+    return (
+      <Space
+        align="center"
+        style={{
+          width: '100%', height: 'calc(100% - 128px)', display: 'flex', justifyContent: 'center', alignItems: 'center',
+        }}
+      >
+        <Spin size="large" />
+      </Space>
+    );
+  }
 
   function renderBreadCrumb() {
     return (
@@ -160,9 +174,9 @@ function ProductRegister() {
   if (redirectToProduct) return <Redirect to="/product" />;
 
   return (
-    <div style={{ padding: 32 }}>
+    <div style={{ padding: 32, height: '100%' }}>
       <PageHeader title="Cadastrar Produto" breadcrumbRender={renderBreadCrumb} />
-      { (!code) || (code && !loading) ? renderForm() : undefined }
+      { (!code) || (code && !loading) ? renderForm() : renderSpin() }
     </div>
   );
 }

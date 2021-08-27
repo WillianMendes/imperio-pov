@@ -152,11 +152,8 @@ const Products: FC = () => {
 
   return (
     <div style={{ padding: 32 }}>
-      <PageHeader
-        title="Produtos"
-        extra={pageHeaderExtra()}
-      />
-      { products && renderTable() }
+      <PageHeader title="Produtos" extra={pageHeaderExtra()} />
+      { renderTable() }
     </div>
   );
 };
