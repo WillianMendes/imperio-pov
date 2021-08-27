@@ -11,6 +11,7 @@ import Pageable from '../types/Pageable';
 import Product from '../types/Product';
 import ProductService from '../services/ProductService';
 import { formatterNumber } from '../utils/MaskCurrency';
+import UserSessionStorage from '../utils/UserSessionStorage';
 
 function Products() {
   const { Column } = Table;
@@ -81,6 +82,7 @@ function Products() {
         value={term}
         onChange={(e) => setTerm(e.target.value)}
         onSearch={(value) => findProducts(value)}
+        placeholder="Nome do produto..."
         required
       />
     );
@@ -119,16 +121,19 @@ function Products() {
           key="isOnDemand"
           render={(value) => (value ? <CheckOutlined /> : <CloseOutlined />)}
         />
-        <Column
-          title="Ações"
-          key="action"
-          render={(value) => (
-            <Space size="middle">
-              <Link to={`/product/update/${value.code}`}>Alterar</Link>
-              <Link to="/product" onClick={() => deleteProduct(value.code)}>Excluir</Link>
-            </Space>
+        { UserSessionStorage.getUserLogged()?.level === 'Admin'
+          && (
+          <Column
+            title="Ações"
+            key="action"
+            render={(value) => (
+              <Space size="middle">
+                <Link to={`/product/update/${value.code}`}>Alterar</Link>
+                <Link to="/product" onClick={() => deleteProduct(value.code)}>Excluir</Link>
+              </Space>
+            )}
+          />
           )}
-        />
       </Table>
     );
   }

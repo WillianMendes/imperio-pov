@@ -3,7 +3,7 @@ interface Admin {
   fullName: string;
   email: string;
   password: string;
-  role: AdminLevel;
+  level: AdminLevel;
 }
 
 enum AdminLevel {
