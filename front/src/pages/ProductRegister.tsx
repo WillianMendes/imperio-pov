@@ -8,14 +8,16 @@ import {
 
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 
-import ProductService from '../services/ProductService';
 import Product from '../types/Product';
+
+import ProductService from '../services/ProductService';
+
 import { formatterNumber, formatterNumberWithoutPrefix, parserNumber } from '../utils/MaskCurrency';
 
-function ProductRegister() {
-  const { Option } = Select;
-  const { Item } = Form;
+const { Option } = Select;
+const { Item } = Form;
 
+function ProductRegister() {
   // Data for Update
   const [product, setProduct] = useState<Product>();
 
@@ -66,6 +68,25 @@ function ProductRegister() {
     setLoading(false);
   }
 
+  useEffect(() => {
+    if (code) getProduct().then();
+  }, []);
+
+  function renderBreadCrumb() {
+    return (
+      <Breadcrumb>
+        <Breadcrumb.Item>
+          <Link to="/product">
+            Produtos
+          </Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>
+          Cadastrar Produto
+        </Breadcrumb.Item>
+      </Breadcrumb>
+    );
+  }
+
   function renderForm() {
     return (
       <Form layout="vertical" onFinish={(values) => saveProduct(values)} style={{ width: '100%', marginTop: 16 }}>
@@ -104,7 +125,7 @@ function ProductRegister() {
           </Col>
           <Col span="12">
             <Item label="Medida" name="measurement" initialValue={product?.measurement} required wrapperCol={{ span: 24 }}>
-              <Select defaultActiveFirstOption={product === undefined} style={{ width: '100%' }}>
+              <Select defaultValue="UN" defaultActiveFirstOption={product === undefined} style={{ width: '100%' }}>
                 <Option value="UN">Unidades</Option>
                 <Option value="KG">Quilogramas</Option>
                 <Option value="M2">Metros Quadrados</Option>
@@ -121,7 +142,14 @@ function ProductRegister() {
           <Col span="12">
             <Space>
               <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>Registrar</Button>
-              <Button type="default" disabled={loading} icon={<CloseOutlined />}>Cancelar</Button>
+              <Button
+                type="default"
+                disabled={loading}
+                icon={<CloseOutlined />}
+                onClick={() => setRedirectToProduct(true)}
+              >
+                Cancelar
+              </Button>
             </Space>
           </Col>
         </Row>
@@ -129,26 +157,11 @@ function ProductRegister() {
     );
   }
 
-  useEffect(() => {
-    if (code) getProduct().then();
-  }, []);
-
   if (redirectToProduct) return <Redirect to="/product" />;
 
   return (
     <div style={{ padding: 32 }}>
-      <PageHeader title="Cadastrar Produto">
-        <Breadcrumb>
-          <Breadcrumb.Item>
-            <Link to="/product">
-              Produtos
-            </Link>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>
-            Cadastrar Produto
-          </Breadcrumb.Item>
-        </Breadcrumb>
-      </PageHeader>
+      <PageHeader title="Cadastrar Produto" breadcrumbRender={renderBreadCrumb} />
       { (!code) || (code && !loading) ? renderForm() : undefined }
     </div>
   );
