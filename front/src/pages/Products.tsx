@@ -15,6 +15,10 @@ import ProductService from '../services/ProductService';
 import { formatterNumber } from '../utils/MaskCurrency';
 import UserSessionStorage from '../utils/UserSessionStorage';
 
+import {
+  ADMIN_URL_APP_PRODUCT_BASE, ADMIN_URL_APP_PRODUCT_REGISTER, ADMIN_URL_APP_PRODUCT_UPDATE,
+} from '../const/ROUTES_ADMIN';
+
 const { Column } = Table;
 
 const Products: FC = () => {
@@ -61,7 +65,7 @@ const Products: FC = () => {
 
   function getButtonNewProduct() {
     return (
-      <Link to="/product/register">
+      <Link to={ADMIN_URL_APP_PRODUCT_REGISTER}>
         <Button
           type="primary"
           size="middle"
@@ -140,8 +144,13 @@ const Products: FC = () => {
             key="action"
             render={(value) => (
               <Space size="middle">
-                <Link to={`/product/update/${value.code}`}>Alterar</Link>
-                <Link to="/product" onClick={() => deleteProduct(value.code)}>Excluir</Link>
+                <Link to={ADMIN_URL_APP_PRODUCT_UPDATE.replace(':code', value.code)}>Alterar</Link>
+                <Link
+                  to={ADMIN_URL_APP_PRODUCT_BASE}
+                  onClick={() => deleteProduct(value.code)}
+                >
+                  Excluir
+                </Link>
               </Space>
             )}
           />

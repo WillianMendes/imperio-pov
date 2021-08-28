@@ -8,7 +8,10 @@ import {
 import {
   EyeInvisibleOutlined, EyeTwoTone, LockOutlined, SendOutlined, MailOutlined,
 } from '@ant-design/icons';
+
 import AdminService from '../services/AdminService';
+
+import { ADMIN_URL_APP_DASHBOARD } from '../const/ROUTES_ADMIN';
 
 function Login() {
   const [form] = Form.useForm();
@@ -47,7 +50,7 @@ function Login() {
   // Umount States
   useEffect(() => () => {}, []);
 
-  if (redirectToDashboard) return <Redirect to="/dashboard" />;
+  if (redirectToDashboard) return <Redirect to={ADMIN_URL_APP_DASHBOARD} />;
 
   return (
     <div className="w-100vw h-100vh" style={{ backgroundColor: 'steelblue' }}>

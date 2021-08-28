@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import {
   Button, Col, Form, Input, Layout, message, Modal, Result, Row, Statistic, Steps,
 } from 'antd';
+
 import { Content } from 'antd/lib/layout/layout';
 
 import {
@@ -12,6 +13,8 @@ import {
 } from '@ant-design/icons';
 
 import AdminService from '../services/AdminService';
+
+import { ADMIN_URL_LOGIN } from '../const/ROUTES_ADMIN';
 
 function RecoveryPassword() {
   // Inputs
@@ -275,7 +278,7 @@ function RecoveryPassword() {
   // Umount States
   useEffect(() => () => {}, []);
 
-  if (redirectToLogin) return <Redirect to="/login" />;
+  if (redirectToLogin) return <Redirect to={ADMIN_URL_LOGIN} />;
 
   return (
     <Layout>

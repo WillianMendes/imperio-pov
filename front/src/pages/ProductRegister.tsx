@@ -15,6 +15,8 @@ import ProductService from '../services/ProductService';
 
 import { formatterNumber, formatterNumberWithoutPrefix, parserNumber } from '../utils/MaskCurrency';
 
+import { ADMIN_URL_APP_PRODUCT_BASE } from '../const/ROUTES_ADMIN';
+
 const { Option } = Select;
 const { Item } = Form;
 
@@ -90,7 +92,7 @@ function ProductRegister() {
     return (
       <Breadcrumb>
         <Breadcrumb.Item>
-          <Link to="/product">
+          <Link to={ADMIN_URL_APP_PRODUCT_BASE}>
             Produtos
           </Link>
         </Breadcrumb.Item>
@@ -171,7 +173,7 @@ function ProductRegister() {
     );
   }
 
-  if (redirectToProduct) return <Redirect to="/product" />;
+  if (redirectToProduct) return <Redirect to={ADMIN_URL_APP_PRODUCT_BASE} />;
 
   return (
     <div style={{ padding: 32, height: '100%' }}>
