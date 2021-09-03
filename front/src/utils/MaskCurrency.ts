@@ -12,7 +12,7 @@ function formatterNumber(value: string | undefined | number): string {
 function formatterNumberWithoutPrefix(value: string | number | undefined): string {
   if (!value) return '0';
   if (Number.isNaN(value)) return 'Valor Inválido.';
-  return value.toString().replace('.', ',');
+  return Number(value).toFixed(2).toString().replace('.', ',');
 }
 
 export {
