@@ -1,7 +1,7 @@
 import Admin from '../types/Admin';
 
 class UserSessionStorage {
-  static getUserLogged(): Admin | null {
+  static getUserLogged(): Admin {
     return JSON.parse(<string>sessionStorage.getItem('login'));
   }
 }
