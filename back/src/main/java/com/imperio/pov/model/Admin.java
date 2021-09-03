@@ -2,10 +2,7 @@ package com.imperio.pov.model;
 
 import com.imperio.pov.controller.dto.AdminDto;
 import com.imperio.pov.model.enums.LevelAdmin;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -16,7 +13,8 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class Admin {
 
     @Id
@@ -42,7 +40,7 @@ public class Admin {
     private LevelAdmin level;
 
     public AdminDto mapperToDto() {
-        return new AdminDto(this.id, this.fullName, this.email, this.level);
+        return new AdminDto(this.id, this.fullName, this.email, this.password, this.level);
     }
 
 }
