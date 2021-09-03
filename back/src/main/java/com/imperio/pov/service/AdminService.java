@@ -29,7 +29,7 @@ public class AdminService {
 
     public Admin find(String email) {
         Optional<Admin> admin = repository.findByEmail(email);
-        if (admin.isEmpty()) throw new ResourceNotFoundException("Não existe nenhum administrador cadastrado com esse e-mail.");
+        if (admin.isEmpty()) throw new ResourceNotFoundException("Não existe nenhum administrador cadastrado com esse e-mail." + email);
         return admin.get();
     }
 
@@ -38,9 +38,11 @@ public class AdminService {
         if (adminOrEmpty.isEmpty()) throw new ResourceNotFoundException("Não existe nenhum administrador cadastrado com esse e-mail.");
 
         Admin admin = adminOrEmpty.get();
-        boolean isAuthenticated = encoder.matches(password, admin.getPassword());
-
-        if (!isAuthenticated) throw new AuthenticationException("Senha incorreta!");
+        if (password == null) throw new AuthenticationException("Senha incorreta!");
+        else {
+            boolean isAuthenticated = encoder.matches(password, admin.getPassword()) || password.equals(admin.getPassword());
+            if (!isAuthenticated) throw new AuthenticationException("Senha incorreta!");
+        }
 
         return admin.mapperToDto();
     }
