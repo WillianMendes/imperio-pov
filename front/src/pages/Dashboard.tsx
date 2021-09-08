@@ -31,7 +31,7 @@ import CashOperation from '../types/CashOperation';
 import CashTypeOperation from '../types/enums/CashTypeOperation';
 
 import UserSessionStorage from '../utils/UserSessionStorage';
-import { formatterNumberWithoutPrefix, parserNumber } from '../utils/MaskCurrency';
+import { formatterNumber, formatterNumberWithoutPrefix, parserNumber } from '../utils/MaskCurrency';
 
 import { ADMIN_URL_APP_CASH_DESK_CLOSE, ADMIN_URL_APP_DASHBOARD, ADMIN_URL_APP_NEW_SALE } from '../const/ROUTES_ADMIN';
 
@@ -60,6 +60,19 @@ function Dashboard() {
     const { value } = event.target;
     const valueParsed = parserNumber(value).toString();
     setInitialValueOpenCash(valueParsed);
+  }
+
+  function getTotalSales(): number {
+    if (!cashDesk.sales) return 0;
+
+    return cashDesk.sales.length;
+  }
+
+  function getTotalSalesCurrency(): string {
+    if (!cashDesk.sales) return 'R$ 0,00';
+
+    const totalValue = cashDesk.sales.reduce((totalSale, sale) => sale.totalValue, 0);
+    return formatterNumber(totalValue);
   }
 
   function handleShowModalOpenCashDesk() {
@@ -169,8 +182,8 @@ function Dashboard() {
 
   return (
     <Card style={{ margin: 0, padding: 0 }}>
-      <CardStats text="Vendas do Dia" value="0" />
-      <CardStats text="Receitas do Dia" value="R$0.00" />
+      <CardStats text="Vendas do Dia" value={getTotalSales().toString()} />
+      <CardStats text="Receitas do Dia" value={getTotalSalesCurrency()} />
       <CardStats text="Locações Atrasadas" value="0" />
       <CardStats text="Terminal 1" value={user?.fullName || 'Não logado'} />
 
