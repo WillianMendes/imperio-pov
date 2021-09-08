@@ -1,4 +1,4 @@
-import { API_URL_CASH_DESK_OPEN } from '../const/API_POS';
+import { API_URL_CASH_DESK_CLOSE, API_URL_CASH_DESK_OPEN } from '../const/API_POS';
 
 import CashDesk from '../types/CashDesk';
 import CashOperation from '../types/CashOperation';
@@ -26,6 +26,24 @@ class CashDeskService {
 
     try {
       const response = await fetch(API_URL_CASH_DESK_OPEN, headers);
+      return await response.json();
+    } catch (error) {
+      this.errorApi.error = error;
+      return this.errorApi;
+    }
+  }
+
+  static async closeCashDesk(operator: Admin): Promise<CashDesk | ErrorApi> {
+    const header = new Headers();
+    header.set('Content-Type', 'application/json');
+    const headers = {
+      method: 'POST',
+      body: JSON.stringify(operator),
+      headers: header,
+    };
+
+    try {
+      const response = await fetch(API_URL_CASH_DESK_CLOSE, headers);
       return await response.json();
     } catch (error) {
       this.errorApi.error = error;

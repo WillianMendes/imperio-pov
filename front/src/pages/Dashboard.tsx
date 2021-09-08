@@ -1,7 +1,10 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, {
+  ChangeEvent, useContext, useEffect, useState,
+} from 'react';
+import { Redirect } from 'react-router-dom';
 
 import {
-  Button, Card, Form, Input, message, Modal, Result,
+  Button, Card, Form, Input, message, Modal, Result, Space,
 } from 'antd';
 
 import {
@@ -30,25 +33,23 @@ import CashTypeOperation from '../types/enums/CashTypeOperation';
 import UserSessionStorage from '../utils/UserSessionStorage';
 import { formatterNumberWithoutPrefix, parserNumber } from '../utils/MaskCurrency';
 
-import { ADMIN_URL_APP_DASHBOARD, ADMIN_URL_APP_NEW_SALE } from '../const/ROUTES_ADMIN';
+import { ADMIN_URL_APP_CASH_DESK_CLOSE, ADMIN_URL_APP_DASHBOARD, ADMIN_URL_APP_NEW_SALE } from '../const/ROUTES_ADMIN';
+
+import CashDeskContext from '../store/CashDesk/CashDeskContext';
 
 const { Item } = Form;
 
 function Dashboard() {
+  // User
   const [user] = useState<Admin>(UserSessionStorage.getUserLogged());
-  const [cashDesk, setCashDesk] = useState<CashDesk | undefined>();
+  const { cashDesk, setCashDesk } = useContext(CashDeskContext);
 
   // Modal Open Cash
   const [modalOpenCashDeskVisibility, setModalOpenCashDeskVisibility] = useState<boolean>();
   const [initialValueOpenCash, setInitialValueOpenCash] = useState<string>('0');
 
-  function showModalOpenCashDesk() {
-    setModalOpenCashDeskVisibility(true);
-  }
-
-  function closeModalOpenCashDesk() {
-    setModalOpenCashDeskVisibility(false);
-  }
+  // Redirect
+  const [isRedirectToClosedCashDesk, setIsRedirectToClosedCashDesk] = useState<boolean>(false);
 
   function setCashDeskStateAndSession(cashDeskToSave: CashDesk) {
     setCashDesk(cashDeskToSave);
@@ -61,7 +62,15 @@ function Dashboard() {
     setInitialValueOpenCash(valueParsed);
   }
 
-  async function loadCashDeskActive() {
+  function handleShowModalOpenCashDesk() {
+    setModalOpenCashDeskVisibility(true);
+  }
+
+  function handleCloseModalOpenCashDesk() {
+    setModalOpenCashDeskVisibility(false);
+  }
+
+  async function handleLoadCashDeskActive() {
     message.info('Tentando carregar caixa da sessão anterior...');
 
     const cashDeskResponse = await CashDeskService.getCashDeskActive(user);
@@ -85,18 +94,27 @@ function Dashboard() {
 
     if ('message' in cashDeskResponse) {
       message.error(cashDeskResponse.message);
-
-      if (cashDeskResponse.status === 406) {
-        loadCashDeskActive().then();
-      }
     } else if ('operator' in cashDeskResponse) {
       setCashDeskStateAndSession(cashDeskResponse);
+    }
+
+    handleCloseModalOpenCashDesk();
+  }
+
+  async function closeCashDesk() {
+    const cashDeskResponse = await CashDeskService.getCashDeskActive(user);
+
+    if ('message' in cashDeskResponse) {
+      message.error(cashDeskResponse.message);
+    } else if ('operator' in cashDeskResponse) {
+      setCashDeskStateAndSession(cashDeskResponse);
+      setIsRedirectToClosedCashDesk(true);
     }
   }
 
   function renderModalOpenCashDesk() {
     return (
-      <Modal title="Dinheiro em caixa" visible={modalOpenCashDeskVisibility} onOk={handleOpenCashDesk} onCancel={closeModalOpenCashDesk}>
+      <Modal title="Dinheiro em caixa" visible={modalOpenCashDeskVisibility} onOk={handleOpenCashDesk} onCancel={handleCloseModalOpenCashDesk}>
         <Form layout="vertical">
           <Item initialValue={formatterNumberWithoutPrefix(initialValueOpenCash)}>
             <Input
@@ -118,19 +136,34 @@ function Dashboard() {
     if (cashDeskOrNull) setCashDesk(JSON.parse(cashDeskOrNull));
   }, []);
 
-  if (!cashDesk) {
+  if (cashDesk.id === 0) {
     return (
       <>
         { modalOpenCashDeskVisibility && renderModalOpenCashDesk() }
         <Result
           title={`Bem vindo(a) ${user?.fullName}!`}
           extra={(
-            <Button type="primary" key="console" onClick={showModalOpenCashDesk}>
-              Abrir Caixa
-            </Button>
+            <Space>
+              <Button type="primary" key="console" onClick={handleShowModalOpenCashDesk}>
+                Abrir Caixa
+              </Button>
+              <Button type="default" key="console" onClick={handleLoadCashDeskActive}>
+                Carregar Caixa Ativo
+              </Button>
+            </Space>
           )}
         />
       </>
+    );
+  }
+
+  if (isRedirectToClosedCashDesk) {
+    return (
+      <Redirect to={{
+        pathname: ADMIN_URL_APP_CASH_DESK_CLOSE,
+        state: cashDesk,
+      }}
+      />
     );
   }
 
@@ -151,7 +184,7 @@ function Dashboard() {
       <CardButton text="Finalizar Aluguel" path={ADMIN_URL_APP_DASHBOARD} icon={<CloseOutlined />} />
       <CardButton text="Cadastrar Cliente" path={ADMIN_URL_APP_DASHBOARD} icon={<UserAddOutlined />} />
 
-      <CardButton text="Fechar Caixa" path={ADMIN_URL_APP_DASHBOARD} icon={<PoweroffOutlined />} />
+      <CardButton text="Fechar Caixa" onClick={closeCashDesk} path="#" icon={<PoweroffOutlined />} />
       <CardButton text="Realizar Balanço" path={ADMIN_URL_APP_DASHBOARD} icon={<SyncOutlined />} />
       <CardButton text="Inserir Dinheiro" path={ADMIN_URL_APP_DASHBOARD} icon={<RiseOutlined />} />
       <CardButton text="Retirar Dinheiro" path={ADMIN_URL_APP_DASHBOARD} icon={<FallOutlined />} />

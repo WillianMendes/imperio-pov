@@ -1,5 +1,5 @@
 interface Admin {
-  id: Number;
+  id: number;
   fullName: string;
   email: string;
   passwordEncoded: string;
@@ -15,3 +15,4 @@ enum AdminLevel {
 }
 
 export default Admin;
+export { AdminLevel };
