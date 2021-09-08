@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import {
   BrowserRouter, Redirect, Route, Switch,
@@ -18,6 +19,7 @@ import NewSale from './pages/NewSale';
 
 import {
   ADMIN_URL_APP_BASE,
+  ADMIN_URL_APP_CASH_DESK_CLOSE,
   ADMIN_URL_APP_DASHBOARD,
   ADMIN_URL_APP_NEW_SALE,
   ADMIN_URL_APP_PRODUCT_BASE,
@@ -26,44 +28,53 @@ import {
   ADMIN_URL_LOGIN,
   ADMIN_URL_RECOVERY_PASSWORD,
 } from './const/ROUTES_ADMIN';
+import ClosedCashDesk from './pages/ClosedCashDesk';
+import GlobalContext from "./store";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Redirect exact from="/" to={ADMIN_URL_APP_DASHBOARD} />
+    <GlobalContext>
+      <BrowserRouter>
+        <Redirect exact from="/" to={ADMIN_URL_APP_DASHBOARD} />
 
-      <Route path={[ADMIN_URL_LOGIN, ADMIN_URL_RECOVERY_PASSWORD]}>
-        <Switch>
-          <Route path={ADMIN_URL_LOGIN} component={Login} />
-          <Route path={ADMIN_URL_RECOVERY_PASSWORD} component={RecoveryPassword} />
-        </Switch>
-      </Route>
-
-      <Route path={ADMIN_URL_APP_BASE}>
-        <LayoutPanel>
+        <Route path={[ADMIN_URL_LOGIN, ADMIN_URL_RECOVERY_PASSWORD]}>
           <Switch>
-            <ProtectedRoute path={ADMIN_URL_APP_DASHBOARD} exact>
-              <Dashboard />
-            </ProtectedRoute>
-            <ProtectedRoute path={ADMIN_URL_APP_NEW_SALE} exact>
-              <NewSale />
-            </ProtectedRoute>
-            <ProtectedRoute path={ADMIN_URL_APP_PRODUCT_BASE} exact>
-              <Products />
-            </ProtectedRoute>
-            <ProtectedRoute path={ADMIN_URL_APP_PRODUCT_UPDATE}>
-              <ProductRegister />
-            </ProtectedRoute>
-            <ProtectedRoute path={ADMIN_URL_APP_PRODUCT_REGISTER} exact>
-              <ProductRegister />
-            </ProtectedRoute>
-            <ProtectedRoute path={`${ADMIN_URL_APP_BASE}*`}>
-              <NotFound />
-            </ProtectedRoute>
+            <Route path={ADMIN_URL_LOGIN} component={Login} />
+            <Route path={ADMIN_URL_RECOVERY_PASSWORD} component={RecoveryPassword} />
           </Switch>
-        </LayoutPanel>
-      </Route>
-    </BrowserRouter>
+        </Route>
+
+        <Route path={ADMIN_URL_APP_BASE}>
+          <LayoutPanel>
+            <Switch>
+              <ProtectedRoute path={ADMIN_URL_APP_DASHBOARD} exact>
+                <Dashboard />
+              </ProtectedRoute>
+              <ProtectedRoute path={ADMIN_URL_APP_NEW_SALE} exact>
+                <NewSale />
+              </ProtectedRoute>
+              <ProtectedRoute path={ADMIN_URL_APP_PRODUCT_BASE} exact>
+                <Products />
+              </ProtectedRoute>
+              <ProtectedRoute path={ADMIN_URL_APP_PRODUCT_UPDATE}>
+                <ProductRegister />
+              </ProtectedRoute>
+              <ProtectedRoute path={ADMIN_URL_APP_PRODUCT_REGISTER} exact>
+                <ProductRegister />
+              </ProtectedRoute>
+              <ProtectedRoute
+                path={ADMIN_URL_APP_CASH_DESK_CLOSE}
+                render={(props: any) => <ClosedCashDesk {...props} />}
+                exact
+              />
+              <ProtectedRoute path={`${ADMIN_URL_APP_BASE}*`}>
+                <NotFound />
+              </ProtectedRoute>
+            </Switch>
+          </LayoutPanel>
+        </Route>
+      </BrowserRouter>
+    </GlobalContext>
   );
 }
 
