@@ -24,4 +24,15 @@ public class CashDeskDto {
         this.sales = sales;
         this.operations = operations;
     }
+
+    public CashDeskDto(CashDesk cashDesk) {
+        this.id = cashDesk.getId();
+        this.operator = cashDesk.getOperator().mapperToDto();
+        this.open = cashDesk.getOpen();
+        this.closed = cashDesk.getClosed();
+    }
+
+    public CashDesk mapperToModel() {
+        return new CashDesk(this.id, this.operator.mapperToModel(), this.open, this.closed);
+    }
 }

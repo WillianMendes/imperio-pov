@@ -10,7 +10,9 @@ import com.imperio.pov.repository.CashDeskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CashDeskService {
@@ -18,16 +20,23 @@ public class CashDeskService {
     private final CashDeskRepository repository;
     private final AdminService adminService;
     private final CashOperationService operationService;
-    private final SalesService salesService;
 
     @Autowired
-    public CashDeskService(
-            CashDeskRepository repository, AdminService adminService, CashOperationService operationService, SalesService salesService
-    ) {
+    private SalesService salesService;
+
+    @Autowired
+    public CashDeskService(CashDeskRepository repository, AdminService adminService, CashOperationService operationService) {
         this.repository = repository;
         this.adminService = adminService;
         this.operationService = operationService;
-        this.salesService = salesService;
+    }
+
+    public CashDeskDto findCashDesk(Long cashDeskId) {
+        Optional<CashDesk> cashDesk = repository.findById(cashDeskId);
+
+        if (cashDesk.isEmpty()) throw new ResourceNotFoundException("Ops! Aconteceu um erro ao tentar encontrar o seu caixa!");
+
+        return cashDesk.get().mapperToDto();
     }
 
     public CashDeskDto getCashDeskOpened(AdminDto dto) {
@@ -66,8 +75,16 @@ public class CashDeskService {
         return !repository.findAllByOperatorAndClosed(operator, null).isEmpty();
     }
 
-    public void closedCashDesk(Long id) {
+    public CashDeskDto closedCashDesk(AdminDto adminDto) {
+        AdminDto adminAuthenticate = adminService.authentication(adminDto.getEmail(), adminDto.getPasswordEncoded());
 
+        CashDeskDto cashDeskDto = getCashDeskOpened(adminAuthenticate);
+        cashDeskDto.setClosed(LocalDateTime.now());
+
+        CashDesk cashDesk = cashDeskDto.mapperToModel();
+        repository.save(cashDesk);
+
+        return cashDeskDto;
     }
 
 }
