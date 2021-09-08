@@ -5,6 +5,7 @@ export const ADMIN_URL_RECOVERY_PASSWORD = '/recovery';
 export const ADMIN_URL_APP_BASE = '/app';
 export const ADMIN_URL_APP_DASHBOARD = `${ADMIN_URL_APP_BASE}/dashboard`;
 export const ADMIN_URL_APP_NEW_SALE = `${ADMIN_URL_APP_BASE}/new-sale`;
+export const ADMIN_URL_APP_CASH_DESK_CLOSE = `${ADMIN_URL_APP_BASE}/cash-desk-closed`;
 
 export const ADMIN_URL_APP_PRODUCT_BASE = `${ADMIN_URL_APP_BASE}/product`;
 export const ADMIN_URL_APP_PRODUCT_REGISTER = `${ADMIN_URL_APP_PRODUCT_BASE}/register`;
