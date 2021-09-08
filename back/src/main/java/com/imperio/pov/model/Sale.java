@@ -28,7 +28,7 @@ public class Sale implements Serializable {
 
     @ToString.Exclude
     @NotNull
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Column
     private List<ItemSale> items;
 

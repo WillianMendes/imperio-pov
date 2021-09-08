@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -53,6 +54,10 @@ public class ProductService {
         if (nameIsExists(product.getName())) throw new FieldDuplicateEntryException("Já existe um produto registrado com esse nome.");
 
         return repository.save(product).mapperToDto();
+    }
+
+    public void updateAll(List<Product> products) {
+        repository.saveAll(products);
     }
 
     public ProductDto update(Product product, Long code) {

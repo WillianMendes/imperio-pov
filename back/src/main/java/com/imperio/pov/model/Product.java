@@ -47,6 +47,21 @@ public class Product implements Serializable {
     @Column(nullable = false)
     private Boolean isOnDemand;
 
+    public void stockOut(int quantity) {
+        int quantityPos = this.quantity - quantity;
+
+        if (this.isOnDemand) {
+            this.quantity = Math.max(quantityPos, 0);
+            return;
+        };
+
+        if (quantity > this.quantity) {
+            throw new IllegalArgumentException("Quantidade em estoque não disponível.");
+        }
+
+        this.quantity = quantityPos;
+    }
+
     public ProductDto mapperToDto() {
         return new ProductDto(
             this.code, this.name, this.priceCost, this.priceSell, this.quantity, this.measurement, this.isOnDemand

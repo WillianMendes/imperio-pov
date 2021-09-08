@@ -1,6 +1,8 @@
 package com.imperio.pov.controller.dto;
 
+import com.imperio.pov.model.CashDesk;
 import com.imperio.pov.model.ItemSale;
+import com.imperio.pov.model.Sale;
 import com.imperio.pov.model.enums.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,5 +21,9 @@ public class SaleDto implements Serializable {
     private BigDecimal totalValue;
     private PaymentMethod paymentMethod;
     private LocalDateTime created;
+
+    public Sale mapperToModel(CashDesk cashDesk) {
+        return new Sale(this.items, this.paymentMethod, cashDesk);
+    }
 
 }
