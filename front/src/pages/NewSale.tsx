@@ -1,4 +1,6 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, {
+  FC, useContext, useEffect, useState,
+} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 
 import {
@@ -7,7 +9,6 @@ import {
   Card,
   Col,
   ConfigProvider,
-  Divider,
   Drawer,
   Form,
   Input,
@@ -30,16 +31,16 @@ import {
 import Pageable from '../types/Pageable';
 import Product from '../types/Product';
 import ItemSale from '../types/ItemSale';
+import Sale from '../types/Sale';
+import PaymentMethod from '../types/enums/PaymentMethod';
 
 import ProductService from '../services/ProductService';
 
 import { formatterNumber, parserNumber } from '../utils/MaskCurrency';
 
 import { ADMIN_URL_APP_DASHBOARD } from '../const/ROUTES_ADMIN';
-
-import { mountCoupon } from '../utils/PrintNonFiscalCoupon';
-import Sale from '../types/Sale';
-import PaymentMethod from '../types/enums/PaymentMethod';
+import CashDeskContext from '../store/CashDesk/CashDeskContext';
+import SaleService from '../services/SaleService';
 
 const { Column } = Table;
 const { Item } = Form;
@@ -84,6 +85,8 @@ const NewSale: FC = () => {
   // Redirect
   const [redirectToDashboard, setRedirectToDashboard] = useState<boolean>(false);
 
+  const { cashDesk } = useContext(CashDeskContext);
+
   async function loadProducts(page: number = 0, name: string | undefined = '', size: number = 9) {
     setLoading(true);
 
@@ -119,6 +122,19 @@ const NewSale: FC = () => {
 
     setItemSelected(item);
     setModalQuantityIsVisible(true);
+  }
+
+  async function handleCompleteSale() {
+    if (!sale) return;
+
+    const response = await SaleService.save(sale, cashDesk.id);
+
+    if ('message' in response) {
+      message.error(response.message);
+    } else if ('id' in response) {
+      message.success(`A venda ${response.id} foi registrada.`);
+      setRedirectToDashboard(true);
+    }
   }
 
   function getSaleTotalValue(items: ItemSale[] | undefined = undefined) {
@@ -259,7 +275,7 @@ const NewSale: FC = () => {
         setValueReceived(sale?.totalValue.toString());
         break;
       default:
-        message.error('Metodo de pagamento invalido.').then();
+        message.error('Método de pagamento invalido.').then();
     }
 
     setSale((prevState) => {
@@ -514,8 +530,8 @@ const NewSale: FC = () => {
         </Card>
         <Button
           type="primary"
-          onClick={() => mountCoupon(sale, valueReceived)}
-          disabled={Number(valueReceived) < Number(sale?.totalValue)}
+          onClick={() => handleCompleteSale()}
+          disabled={Number(valueReceived) < Number(sale?.totalValue) || !valueReceived}
           style={{ width: '100%', marginTop: '32px' }}
         >
           Finalizar Compra
@@ -530,12 +546,11 @@ const NewSale: FC = () => {
     <div style={{ padding: '36px', height: '100vh' }}>
       { renderModalQuantity() }
       { renderDrawerSaleFinished() }
-      <Row>
-        <Col span={15}>
+      <Row gutter={{ md: 16 }}>
+        <Col span={16}>
           <PageHeader title="Nova Venda" breadcrumbRender={renderBreadCrumb} extra={renderHeaderExtra()} />
           { renderTable() }
         </Col>
-        <Col span={1}><Divider type="vertical" /></Col>
         <Col span={8}>
           <h1>Carrinho</h1>
           { renderListCart() }
