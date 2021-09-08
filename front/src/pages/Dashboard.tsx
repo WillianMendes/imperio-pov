@@ -26,7 +26,6 @@ import CardStats from '../components/CardStats';
 import CashDeskService from '../services/CashDeskService';
 
 import Admin from '../types/Admin';
-import CashDesk from '../types/CashDesk';
 import CashOperation from '../types/CashOperation';
 import CashTypeOperation from '../types/enums/CashTypeOperation';
 
@@ -36,6 +35,7 @@ import { formatterNumber, formatterNumberWithoutPrefix, parserNumber } from '../
 import { ADMIN_URL_APP_CASH_DESK_CLOSE, ADMIN_URL_APP_DASHBOARD, ADMIN_URL_APP_NEW_SALE } from '../const/ROUTES_ADMIN';
 
 import CashDeskContext from '../store/CashDesk/CashDeskContext';
+import Sale from '../types/Sale';
 
 const { Item } = Form;
 
@@ -50,11 +50,6 @@ function Dashboard() {
 
   // Redirect
   const [isRedirectToClosedCashDesk, setIsRedirectToClosedCashDesk] = useState<boolean>(false);
-
-  function setCashDeskStateAndSession(cashDeskToSave: CashDesk) {
-    setCashDesk(cashDeskToSave);
-    sessionStorage.setItem('CashDesk', JSON.stringify(cashDeskToSave));
-  }
 
   function setInitialValueOpenCashFormatted(event: ChangeEvent<HTMLInputElement>) {
     const { value } = event.target;
@@ -71,7 +66,9 @@ function Dashboard() {
   function getTotalSalesCurrency(): string {
     if (!cashDesk.sales) return 'R$ 0,00';
 
-    const totalValue = cashDesk.sales.reduce((totalSale, sale) => sale.totalValue, 0);
+    const totalValue = cashDesk.sales
+      .reduce((totalSale: number, sale: Sale) => totalSale + sale.totalValue, 0);
+
     return formatterNumber(totalValue);
   }
 
@@ -91,7 +88,7 @@ function Dashboard() {
     if ('message' in cashDeskResponse) {
       message.error(cashDeskResponse.message);
     } else if ('operator' in cashDeskResponse) {
-      setCashDeskStateAndSession(cashDeskResponse);
+      setCashDesk(cashDeskResponse);
       message.success('Caixa ativo carregado!');
     }
   }
@@ -108,7 +105,7 @@ function Dashboard() {
     if ('message' in cashDeskResponse) {
       message.error(cashDeskResponse.message);
     } else if ('operator' in cashDeskResponse) {
-      setCashDeskStateAndSession(cashDeskResponse);
+      setCashDesk(cashDeskResponse);
     }
 
     handleCloseModalOpenCashDesk();
@@ -120,7 +117,7 @@ function Dashboard() {
     if ('message' in cashDeskResponse) {
       message.error(cashDeskResponse.message);
     } else if ('operator' in cashDeskResponse) {
-      setCashDeskStateAndSession(cashDeskResponse);
+      setCashDesk(cashDeskResponse);
       setIsRedirectToClosedCashDesk(true);
     }
   }
@@ -145,8 +142,14 @@ function Dashboard() {
   }
 
   useEffect(() => {
-    const cashDeskOrNull = sessionStorage.getItem('CashDesk');
-    if (cashDeskOrNull) setCashDesk(JSON.parse(cashDeskOrNull));
+    CashDeskService.getCashDeskActive(user).then((cashDeskResponse) => {
+      if ('sales' in cashDeskResponse && 'operations' in cashDeskResponse) {
+        if (cashDeskResponse.sales?.length !== cashDesk.sales?.length
+          || cashDeskResponse.operations?.length !== cashDesk.operations?.length) {
+          setCashDesk(cashDeskResponse);
+        }
+      }
+    });
   }, []);
 
   if (cashDesk.id === 0) {
