@@ -7,14 +7,17 @@ interface CardProps {
   text: string;
   icon: any;
   path: string;
+  onClick?: () => void;
 }
 
 function CardButton(props: CardProps) {
-  const { text, icon, path } = props;
+  const {
+    text, icon, path, onClick,
+  } = props;
   const Icon = icon;
 
   return (
-    <Link to={path}>
+    <Link to={path} onClick={onClick}>
       <Card.Grid className="card-button-base card-button" hoverable>
         { Icon }
         <h1>{ text }</h1>

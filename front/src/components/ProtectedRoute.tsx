@@ -9,9 +9,17 @@ interface Props {
   path:string;
   children?:any;
   exact?: boolean;
+  render?: any;
 }
 
-function ProtectedRoute({ path, children, exact = false }: Props) {
+function ProtectedRoute({
+  path, children, exact = false, render,
+}: Props) {
+  if (render) {
+    return UserSessionStorage.getUserLogged()
+      ? (<Route path={path} exact={exact} render={render} />)
+      : (<Redirect to={ADMIN_URL_LOGIN} />);
+  }
   return UserSessionStorage.getUserLogged()
     ? (<Route path={path} exact={exact}>{ children }</Route>)
     : (<Redirect to={ADMIN_URL_LOGIN} />);
