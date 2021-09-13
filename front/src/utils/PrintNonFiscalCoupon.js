@@ -4,6 +4,19 @@ import {formatterNumber, formatterNumberWithoutPrefix} from './MaskCurrency';
 const qz = require('qz-tray');
 
 export function teste(data) {
+  qz.security.setCertificatePromise(function(resolve, reject) {
+    fetch("../assets/signing/digital-certificate.txt", {cache: 'no-store', headers: {'Content-Type': 'text/plain'}})
+      .then(function(data) { data.ok ? resolve(data.text()) : reject(data.text()); });
+  });
+
+  qz.security.setSignatureAlgorithm("SHA512"); // Since 2.1
+  qz.security.setSignaturePromise(function(toSign) {
+    return function(resolve, reject) {
+      fetch("/secure/url/for/sign-message?request=" + toSign, {cache: 'no-store', headers: {'Content-Type': 'text/plain'}})
+        .then(function(data) { data.ok ? resolve(data.text()) : reject(data.text()); });
+    };
+  });
+
   qz.websocket.connect().then(() => qz.printers.find()).then((printers) => {
     console.log(printers);
     const config = qz.configs.create('ELGIN i9(USB)');
@@ -28,10 +41,10 @@ export const getTableProducts = (sale) => {
     <table>
       <thead>
         <tr>
-          <td>QTD</td>
-          <td>Produto</td>
-          <td>UNIT</td>
-          <td>TOTAL</td>
+          <td style="width: 20%">QTD</td>
+          <td style="width: 40%">Produto</td>
+          <td style="width: 20%">UNIT</td>
+          <td style="width: 20%">TOTAL</td>
         </tr>
       </thead>
       <tbody>
@@ -84,8 +97,8 @@ export function mountCoupon(data, valueReceived) {
 
   let header = `
     <h1>Império Construções</h1>
-    <p>CNPJ: 60.732.697/0001-17</p>
-    <p>Endereço: Centro — Av. das Dores, 1976 </p>
+    <p>CNPJ: 42.977.287/0001-54</p>
+    <p>Av. Gregorio Manoel Pereira - Ceramica, 2140 | Miguelópolis-SP </p>
   `;
   let tableProducts = getTableProducts(data);
   let valuesFinal = `

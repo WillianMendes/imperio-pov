@@ -41,6 +41,7 @@ import { formatterNumber, parserNumber } from '../utils/MaskCurrency';
 import { ADMIN_URL_APP_DASHBOARD } from '../const/ROUTES_ADMIN';
 import CashDeskContext from '../store/CashDesk/CashDeskContext';
 import SaleService from '../services/SaleService';
+import { mountCoupon } from '../utils/PrintNonFiscalCoupon';
 
 const { Column } = Table;
 const { Item } = Form;
@@ -132,6 +133,7 @@ const NewSale: FC = () => {
     if ('message' in response) {
       message.error(response.message);
     } else if ('id' in response) {
+      mountCoupon(sale, valueReceived);
       message.success(`A venda ${response.id} foi registrada.`);
       setRedirectToDashboard(true);
     }

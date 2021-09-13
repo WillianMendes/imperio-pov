@@ -1,4 +1,4 @@
-import { API_URL_CASH_DESK_CLOSE, API_URL_CASH_DESK_OPEN } from '../const/API_POS';
+import { API_URL_CASH_DESK_CLOSE, API_URL_CASH_DESK_GET_OPEN, API_URL_CASH_DESK_OPEN } from '../const/API_POS';
 
 import CashDesk from '../types/CashDesk';
 import CashOperation from '../types/CashOperation';
@@ -61,7 +61,7 @@ class CashDeskService {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/api/cash-desk/', headers);
+      const response = await fetch(API_URL_CASH_DESK_GET_OPEN, headers);
       return await response.json();
     } catch (error) {
       this.errorApi.error = error;

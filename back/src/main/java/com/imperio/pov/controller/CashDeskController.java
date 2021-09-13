@@ -6,6 +6,7 @@ import com.imperio.pov.controller.dto.OpenCashDeskDto;
 import com.imperio.pov.model.CashDesk;
 import com.imperio.pov.service.CashDeskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,12 +16,8 @@ import javax.validation.Valid;
 @RequestMapping(value = "/cash-desk")
 public class CashDeskController {
 
-    private final CashDeskService service;
-
     @Autowired
-    public CashDeskController(CashDeskService service) {
-        this.service = service;
-    }
+    private CashDeskService service;
 
     @PostMapping(value = "/")
     @ResponseStatus(HttpStatus.OK)

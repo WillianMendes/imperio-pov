@@ -14,6 +14,8 @@ import {
   ADMIN_URL_APP_SETTINGS_BASE,
 } from '../const/ROUTES_ADMIN';
 
+import UserSessionStorage from '../utils/UserSessionStorage';
+
 function MainMenu() {
   const { Sider } = Layout;
 
@@ -46,7 +48,7 @@ function MainMenu() {
             Configurações
           </Link>
         </Menu.Item>
-        <Menu.Item key="5" icon={<LogoutOutlined />}>
+        <Menu.Item key="5" icon={<LogoutOutlined />} onClick={UserSessionStorage.deleteUserLogged}>
           <Link to={ADMIN_URL_APP_LOGOUT_BASE}>
             Sair
           </Link>

@@ -142,6 +142,8 @@ function Dashboard() {
   }
 
   useEffect(() => {
+    if (cashDesk.id === 0) return;
+
     CashDeskService.getCashDeskActive(user).then((cashDeskResponse) => {
       if ('sales' in cashDeskResponse && 'operations' in cashDeskResponse) {
         if (cashDeskResponse.sales?.length !== cashDesk.sales?.length

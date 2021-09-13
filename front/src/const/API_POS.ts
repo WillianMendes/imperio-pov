@@ -1,6 +1,6 @@
 export const API_URL_BASE_PROD = 'https://willian1120.integrator.host/api';
 export const API_URL_BASE_DEV = 'http://localhost:8080/api';
-export const API_URL_BASE_ACTIVE = API_URL_BASE_DEV;
+export const API_URL_BASE_ACTIVE = API_URL_BASE_PROD;
 
 // ADMIN
 export const API_URL_ADMIN_BASE = `${API_URL_BASE_ACTIVE}/admin`;

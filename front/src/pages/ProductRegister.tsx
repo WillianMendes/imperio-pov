@@ -140,8 +140,8 @@ function ProductRegister() {
             </Item>
           </Col>
           <Col span="12">
-            <Item label="Medida" name="measurement" initialValue={product?.measurement} required wrapperCol={{ span: 24 }}>
-              <Select defaultValue="UN" defaultActiveFirstOption={product === undefined} style={{ width: '100%' }}>
+            <Item label="Medida" name="measurement" initialValue={product?.measurement || 'UN'} required wrapperCol={{ span: 24 }}>
+              <Select defaultValue="UN" defaultActiveFirstOption style={{ width: '100%' }}>
                 <Option value="UN">Unidades</Option>
                 <Option value="KG">Quilogramas</Option>
                 <Option value="M2">Metros Quadrados</Option>

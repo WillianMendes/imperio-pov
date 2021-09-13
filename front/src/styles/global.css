@@ -223,6 +223,32 @@ html {
     font-weight: 700;
 }
 
+.card__closed_cash_desk {
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+}
+
+.card__closed_cash_desk p, h3 {
+    padding: 0;
+    margin: 0;
+}
+
+.card__closed_cash_desk h3 {
+    font-size: 1rem;
+    font-weight: 400 !important;
+}
+
+.card__closed_cash_desk p {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.buttons__closed_cash_desk {
+    position: relative;
+    bottom: -197px;
+}
+
 .ant-list-items .ant-card-body {
     min-height: 1px;
 }

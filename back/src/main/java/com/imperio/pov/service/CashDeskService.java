@@ -8,6 +8,7 @@ import com.imperio.pov.model.CashDesk;
 import com.imperio.pov.model.CashOperation;
 import com.imperio.pov.repository.CashDeskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,15 +21,14 @@ public class CashDeskService {
     private final CashDeskRepository repository;
     private final AdminService adminService;
     private final CashOperationService operationService;
+    private final SalesService salesService;
 
     @Autowired
-    private SalesService salesService;
-
-    @Autowired
-    public CashDeskService(CashDeskRepository repository, AdminService adminService, CashOperationService operationService) {
+    public CashDeskService(CashDeskRepository repository, AdminService adminService, CashOperationService operationService, @Lazy SalesService salesService) {
         this.repository = repository;
         this.adminService = adminService;
         this.operationService = operationService;
+        this.salesService = salesService;
     }
 
     public CashDeskDto findCashDesk(Long cashDeskId) {
@@ -86,5 +86,4 @@ public class CashDeskService {
 
         return cashDeskDto;
     }
-
 }
