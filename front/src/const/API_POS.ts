@@ -24,6 +24,7 @@ export const API_URL_CASH_DESK_BASE = `${API_URL_BASE_ACTIVE}/cash-desk`;
 export const API_URL_CASH_DESK_GET_OPEN = `${API_URL_CASH_DESK_BASE}/`;
 export const API_URL_CASH_DESK_OPEN = `${API_URL_CASH_DESK_BASE}/open`;
 export const API_URL_CASH_DESK_CLOSE = `${API_URL_CASH_DESK_BASE}/close`;
+export const API_URL_CASH_DESK_OPERATION_SAVE = `${API_URL_CASH_DESK_BASE}/operation`;
 
 // CASH SALE
 export const API_URL_SALE_BASE = `${API_URL_BASE_ACTIVE}/sale`;
