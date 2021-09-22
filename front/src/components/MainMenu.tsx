@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Menu, Layout } from 'antd';
@@ -15,14 +15,21 @@ import {
 } from '../const/ROUTES_ADMIN';
 
 import UserSessionStorage from '../utils/UserSessionStorage';
+import CashDeskContext, { DEFAULT_VALUE_CASH_DESK } from '../store/CashDesk/CashDeskContext';
 
 function MainMenu() {
   const { Sider } = Layout;
 
+  const { setCashDesk } = useContext(CashDeskContext);
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
   function onCollapse(isCollapsed: boolean) {
     setCollapsed(isCollapsed);
+  }
+
+  function logout() {
+    setCashDesk(DEFAULT_VALUE_CASH_DESK.cashDesk);
+    UserSessionStorage.deleteUserLogged();
   }
 
   return (
@@ -48,7 +55,7 @@ function MainMenu() {
             Configurações
           </Link>
         </Menu.Item>
-        <Menu.Item key="5" icon={<LogoutOutlined />} onClick={UserSessionStorage.deleteUserLogged}>
+        <Menu.Item key="5" icon={<LogoutOutlined />} onClick={logout}>
           <Link to={ADMIN_URL_APP_LOGOUT_BASE}>
             Sair
           </Link>
