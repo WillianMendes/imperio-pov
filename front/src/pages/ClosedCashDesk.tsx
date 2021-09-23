@@ -56,7 +56,7 @@ const ClosedCashDesk: FC = () => {
     }
   }
 
-  function getTotalValueOperation(typeOperation: CashTypeOperation) {
+  function getTotalValueOperation(typeOperation: CashTypeOperation, typing: boolean = false) {
     if (!cashDesk.operations) return 'R$0,00';
 
     const totalValue = cashDesk.operations.reduce((total: number, operation: CashOperation) => {
@@ -65,6 +65,10 @@ const ClosedCashDesk: FC = () => {
       }
       return total;
     }, 0);
+
+    if (typing) {
+      return totalValue;
+    }
 
     return totalValue > 0 ? formatterNumber(totalValue) : 'R$0,00';
   }
@@ -81,13 +85,17 @@ const ClosedCashDesk: FC = () => {
   function getTotalSalesCash() {
     if (!cashDesk.sales) return 'R$0,00';
 
-    const totalValue = cashDesk.sales
+    let totalValue = cashDesk.sales
       .reduce((total: number, sale: Sale) => {
         if (sale.paymentMethod === PaymentMethod.CASH) {
           return total + sale.totalValue;
         }
         return total;
       }, 0);
+
+    const operationsAdd = getTotalValueOperation(CashTypeOperation.ADD, true);
+    const operationsOut = getTotalValueOperation(CashTypeOperation.REMOVE, true);
+    totalValue += (Number(operationsAdd) - Number(operationsOut));
 
     return formatterNumber(totalValue);
   }

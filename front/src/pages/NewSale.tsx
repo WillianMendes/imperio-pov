@@ -127,15 +127,25 @@ const NewSale: FC = () => {
 
   async function handleCompleteSale() {
     if (!sale) return;
+    setLoading(true);
 
     const response = await SaleService.save(sale, cashDesk.id);
 
     if ('message' in response) {
       message.error(response.message);
     } else if ('id' in response) {
-      mountCoupon(sale, valueReceived);
       message.success(`A venda ${response.id} foi registrada.`);
+      await message.loading({ content: 'Tentando imprimir cupom...', key: loading });
+      await mountCoupon(sale, response.created, valueReceived)
+        .then(() => {
+          message.success('Cupom impresso com sucesso.');
+        })
+        .catch((error) => {
+          message.error(error.message);
+          message.error('Houve um erro ao imprimir o cupom fiscal.');
+        });
       setRedirectToDashboard(true);
+      setLoading(false);
     }
   }
 
@@ -533,7 +543,8 @@ const NewSale: FC = () => {
         <Button
           type="primary"
           onClick={() => handleCompleteSale()}
-          disabled={Number(valueReceived) < Number(sale?.totalValue) || !valueReceived}
+          loading={loading}
+          disabled={(Number(valueReceived) < Number(sale?.totalValue) || !valueReceived) || loading}
           style={{ width: '100%', marginTop: '32px' }}
         >
           Finalizar Compra

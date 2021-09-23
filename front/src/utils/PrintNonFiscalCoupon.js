@@ -3,37 +3,30 @@ import {formatterNumber, formatterNumberWithoutPrefix} from './MaskCurrency';
 
 const qz = require('qz-tray');
 
-export function teste(data) {
-  qz.security.setCertificatePromise(function(resolve, reject) {
-    fetch("../assets/signing/digital-certificate.txt", {cache: 'no-store', headers: {'Content-Type': 'text/plain'}})
-      .then(function(data) { data.ok ? resolve(data.text()) : reject(data.text()); });
+export async function teste(data) {
+  const connect = await qz.websocket.connect().catch(() => { throw new Error('Verifique se o software da impressora (QZ TRAY) está sendo executado.') });
+  console.log(connect);
+
+  const printers = await qz.printers.find().catch(async () => {
+    await qz.websocket.disconnect();
+    throw new Error('Não foi possível buscar pelas impressoras conectadas.');
+  });
+  console.log(printers);
+
+  const config = qz.configs.create('ELGIN i9(USB)');
+  console.log(config);
+
+  await qz.print(config, [{
+    type: 'pixel',
+    format: 'html',
+    flavor: 'plain',
+    data,
+  }]).catch(async () => {
+    await qz.websocket.disconnect();
+    throw new Error('A impressora Elgin i9(USB) não está conectada ou houve um erro de driver.');
   });
 
-  qz.security.setSignatureAlgorithm("SHA512"); // Since 2.1
-  qz.security.setSignaturePromise(function(toSign) {
-    return function(resolve, reject) {
-      fetch("/secure/url/for/sign-message?request=" + toSign, {cache: 'no-store', headers: {'Content-Type': 'text/plain'}})
-        .then(function(data) { data.ok ? resolve(data.text()) : reject(data.text()); });
-    };
-  });
-
-  qz.websocket.connect().then(() => qz.printers.find()).then((printers) => {
-    console.log(printers);
-    const config = qz.configs.create('ELGIN i9(USB)');
-    return qz.print(config, [{
-      type: 'pixel',
-      format: 'html',
-      flavor: 'plain',
-      data,
-    }]);
-  }).then(() => qz.websocket.disconnect())
-    .then(() => {
-      // process.exit(0);
-    })
-    .catch((err) => {
-      console.error(err);
-      // process.exit(1);
-    });
+  await qz.websocket.disconnect();
 }
 
 export const getTableProducts = (sale) => {
@@ -72,7 +65,7 @@ export const getTableProducts = (sale) => {
   return tableLayout;
 }
 
-export function mountCoupon(data, valueReceived) {
+export async function mountCoupon(data, createdDate, valueReceived) {
   let tableLayout = `
     <table>
       <tbody>
@@ -94,6 +87,8 @@ export function mountCoupon(data, valueReceived) {
       paymentString = 'Cartão de Debito';
       break;
   }
+
+  const dateSale = new Date(createdDate).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
   let header = `
     <h1>Império Construções</h1>
@@ -128,11 +123,13 @@ export function mountCoupon(data, valueReceived) {
     </tr>
   `;
   let footer = `
+    <p>data da compra: ${dateSale}</p>
     <p>Esse cupom não possui valor fiscal.</p>
     <h3>Agradecemos a Preferencia, volte sempre.</h3>
   `;
 
   let couponFinal = header + tableProducts + tableLayout.replace('content', valuesFinal) + footer;
 
-  teste(couponFinal);
+  await teste(couponFinal);
+  await teste(couponFinal);
 }
